@@ -1,0 +1,66 @@
+.layout { display: grid; grid-template-columns: 1fr 320px; gap: var(--space-2xl); align-items: start; }
+.main { }
+.section { margin-bottom: var(--space-2xl); }
+.sectionTitle { font-size: 1.1rem; font-weight: 700; margin-bottom: var(--space-lg); }
+.optionGrid { display: flex; flex-direction: column; gap: var(--space-md); }
+.optionCard { padding: var(--space-md); border-radius: var(--radius-md); background: var(--color-bg-elevated); border: 2px solid var(--color-border); cursor: pointer; transition: all var(--transition-fast); }
+.optionCard:hover { border-color: var(--color-primary); }
+.optionCardActive { border-color: var(--color-primary) !important; background: rgba(124,92,252,0.06); }
+.optionName { font-weight: 600; font-size: 0.95rem; margin-bottom: 2px; }
+.optionDesc { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.5; margin-bottom: var(--space-xs); }
+.optionMeta { display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.75rem; }
+.optionPrice { font-weight: 700; color: var(--color-primary-light); font-size: 0.9rem; }
+.calendarHeader { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-md); }
+.calMonth { font-weight: 700; font-size: 1rem; }
+.calNavBtn { width: 32px; height: 32px; border-radius: var(--radius-sm); background: var(--color-bg-elevated); border: 1px solid var(--color-border); color: var(--color-text); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: all var(--transition-fast); }
+.calNavBtn:hover { border-color: var(--color-primary); }
+.calGrid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: var(--space-xl); }
+.calDayLabel { text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted); padding: 4px; font-family: var(--font-mono); text-transform: uppercase; }
+.calDay { text-align: center; padding: 10px 4px; border-radius: var(--radius-sm); font-size: 0.85rem; cursor: pointer; transition: all var(--transition-fast); background: none; border: 1px solid transparent; color: var(--color-text); font-family: var(--font-body); }
+.calDay:hover:not(:disabled) { background: var(--color-bg-elevated); border-color: var(--color-border); }
+.calDaySelected { background: rgba(124,92,252,0.15) !important; border-color: var(--color-primary) !important; color: var(--color-primary-light) !important; font-weight: 700; }
+.calDayDisabled { color: var(--color-text-muted); opacity: 0.3; cursor: not-allowed; }
+.calDayEmpty { pointer-events: none; }
+.timeGrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-sm); margin-bottom: var(--space-xl); }
+.timeSlot { padding: 10px; text-align: center; border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.85rem; background: var(--color-bg-elevated); border: 1px solid var(--color-border); color: var(--color-text); cursor: pointer; transition: all var(--transition-fast); }
+.timeSlot:hover { border-color: var(--color-primary); }
+.timeSlotSelected { background: rgba(124,92,252,0.15) !important; border-color: var(--color-primary) !important; color: var(--color-primary-light) !important; font-weight: 700; }
+.form { display: flex; flex-direction: column; gap: var(--space-md); }
+.inputGroup { display: flex; flex-direction: column; gap: var(--space-xs); }
+.label { font-size: 0.85rem; font-weight: 600; color: var(--color-text-secondary); }
+.input { padding: 12px 16px; border-radius: var(--radius-md); background: var(--color-bg-elevated); border: 1px solid var(--color-border); color: var(--color-text); font-size: 0.9rem; font-family: var(--font-body); transition: border-color var(--transition-fast); }
+.input:focus { border-color: var(--color-primary); outline: none; }
+.textarea { min-height: 80px; resize: vertical; }
+.summaryCard { padding: var(--space-xl) !important; position: sticky; top: calc(var(--navbar-height) + var(--space-lg)); }
+.summaryTitle { font-size: 1rem; font-weight: 700; margin-bottom: var(--space-lg); }
+.summaryCoach { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); padding-bottom: var(--space-md); border-bottom: 1px solid var(--color-border); }
+.summaryAvatar { width: 44px; height: 44px; border-radius: 50%; background: var(--color-bg-subtle); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+.summaryCoachName { font-weight: 700; font-size: 0.95rem; }
+.summaryCoachMeta { font-size: 0.8rem; color: var(--color-text-muted); }
+.summaryRow { display: flex; justify-content: space-between; font-size: 0.85rem; padding: var(--space-xs) 0; }
+.summaryLabel { color: var(--color-text-muted); }
+.summaryValue { font-weight: 600; }
+.summaryDivider { height: 1px; background: var(--color-border); margin: var(--space-sm) 0; }
+.summaryTotal { font-size: 1.1rem; font-weight: 700; }
+.summaryTotalValue { color: var(--color-primary-light); }
+.payBtn { width: 100%; padding: 14px; border-radius: var(--radius-md); font-size: 1rem; font-weight: 700; color: white; background: var(--color-primary); border: none; cursor: pointer; transition: all var(--transition-fast); font-family: var(--font-heading); margin-top: var(--space-lg); }
+.payBtn:hover { background: var(--color-primary-dark); box-shadow: var(--glow-primary); }
+.payBtn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.payNote { font-size: 0.75rem; color: var(--color-text-muted); text-align: center; margin-top: var(--space-sm); }
+.timeSlotBooked { opacity: 0.4; cursor: not-allowed; position: relative; text-decoration: line-through; }
+.timeSlotBooked:hover { border-color: var(--color-border); }
+.bookedLabel { display: block; font-size: 0.6rem; color: var(--color-accent); font-family: var(--font-body); text-decoration: none; margin-top: 2px; }
+.error { padding: var(--space-md); border-radius: var(--radius-md); background: rgba(232,64,87,0.1); border: 1px solid rgba(232,64,87,0.3); color: #e84057; font-size: 0.9rem; margin-top: var(--space-md); }
+.loginHint { padding: var(--space-md); border-radius: var(--radius-md); background: rgba(124,92,252,0.06); border: 1px solid rgba(124,92,252,0.15); margin-bottom: var(--space-lg); font-size: 0.85rem; color: var(--color-text-secondary); }
+.loginLink { color: var(--color-primary-light); font-weight: 600; text-decoration: none; }
+.loginLink:hover { text-decoration: underline; }
+.summaryOptionCard { padding: var(--space-sm) var(--space-md); border-radius: var(--radius-sm); background: var(--color-bg-subtle); border: 1px solid var(--color-border); margin-bottom: var(--space-md); }
+.summaryOptionName { font-weight: 600; font-size: 0.85rem; margin-bottom: 2px; }
+.summaryOptionDesc { font-size: 0.75rem; color: var(--color-text-muted); line-height: 1.4; margin-bottom: 4px; }
+.summaryOptionMeta { font-size: 0.75rem; color: var(--color-text-muted); font-family: var(--font-mono); }
+.changeBtn { background: none; border: none; color: var(--color-primary-light); font-size: 0.8rem; font-weight: 500; cursor: pointer; padding: 4px 0; margin-top: var(--space-xs); font-family: var(--font-body); transition: opacity var(--transition-fast); }
+.changeBtn:hover { opacity: 0.7; text-decoration: underline; }
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr; }
+  .timeGrid { grid-template-columns: repeat(3, 1fr); }
+}

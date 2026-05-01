@@ -1,0 +1,274 @@
+.section {
+  padding: var(--space-4xl) 0;
+  position: relative;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-lg);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+}
+
+.sectionLabel {
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-light);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-md);
+}
+
+.sectionTitle {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  margin-bottom: var(--space-md);
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-secondary);
+  max-width: 550px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.card {
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+
+.cardHeader {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.cardBanner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .cardBanner {
+  transform: scale(1.05);
+}
+
+.cardBannerOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, var(--color-bg-card) 0%, transparent 60%);
+}
+
+.cardAvatar {
+  position: absolute;
+  bottom: -28px;
+  left: var(--space-lg);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--color-bg-elevated);
+  overflow: hidden;
+  z-index: 2;
+  background: var(--color-bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+
+.onlineBadge {
+  position: absolute;
+  bottom: -24px;
+  left: 72px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--color-success);
+  border: 3px solid var(--color-bg-elevated);
+  z-index: 3;
+}
+
+.cardBody {
+  padding: var(--space-lg);
+  padding-top: 40px;
+}
+
+.cardNameRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xs);
+}
+
+.cardName {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.cardFlag {
+  font-size: 1rem;
+}
+
+.verifiedBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  font-size: 0.6rem;
+  color: white;
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.rankBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.rankChallenger {
+  background: rgba(244, 200, 116, 0.12);
+  color: var(--color-challenger);
+  border: 1px solid rgba(244, 200, 116, 0.25);
+}
+
+.rankGrandmaster {
+  background: rgba(232, 64, 87, 0.1);
+  color: var(--color-grandmaster);
+  border: 1px solid rgba(232, 64, 87, 0.25);
+}
+
+.rankMaster {
+  background: rgba(157, 72, 196, 0.1);
+  color: var(--color-master);
+  border: 1px solid rgba(157, 72, 196, 0.25);
+}
+
+.rating {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-warning);
+}
+
+.sessions {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.cardRoles {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.roleTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.cardSpecialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-lg);
+}
+
+.specialtyTag {
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  background: rgba(124, 92, 252, 0.08);
+  color: var(--color-primary-light);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+}
+
+.price {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--color-text);
+}
+
+.priceLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+.cardBtn {
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-light);
+  border: 1px solid var(--color-primary);
+  background: rgba(124, 92, 252, 0.08);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  font-family: var(--font-heading);
+}
+
+.cardBtn:hover {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: var(--glow-primary);
+}
+
+.ctaRow {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
