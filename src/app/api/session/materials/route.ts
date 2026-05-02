@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const profile = await getUserProfile(uid);
     const isStudent = booking.studentId === uid;
-    const isCoach = profile?.role === "coach" && (profile as Record<string, unknown>)?.coachId === booking.coachId;
+    const isCoach = profile?.role === "coach" && (profile as unknown as Record<string, unknown>)?.coachId === booking.coachId;
 
     console.log("[materials] uid:", uid, "booking.studentId:", booking.studentId, "isStudent:", isStudent, "isCoach:", isCoach);
 

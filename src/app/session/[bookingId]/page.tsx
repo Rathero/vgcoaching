@@ -289,7 +289,7 @@ export default function SessionPage({ params }: { params: Promise<{ bookingId: s
               video={true}
               style={{ height: "100%" }}
             >
-              <VideoConference chatEnabled={false} />
+              <VideoConference />
               <RoomAudioRenderer />
             </LiveKitRoom>
           </div>

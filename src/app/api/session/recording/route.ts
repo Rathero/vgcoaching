@@ -9,8 +9,8 @@ function getLiveKitHost(): string {
 }
 
 function getStorageBucket(): string {
-  return process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    ? `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebasestorage.app`
+  return process.env.NEXT_PUBLIC_FB_PROJECT_ID
+    ? `${process.env.NEXT_PUBLIC_FB_PROJECT_ID}.firebasestorage.app`
     : "videogamecoaching-a4794.firebasestorage.app";
 }
 
