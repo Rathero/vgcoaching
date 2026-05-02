@@ -4,7 +4,7 @@ import { adminAuth } from "@/lib/firebase-admin";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { coachId, coachingOptionId, scheduledDate, scheduledTime, studentName, studentEmail, notes, idToken } = body;
+  const { coachId, coachingOptionId, scheduledDate, scheduledTime, studentName, studentEmail, notes, idToken, gameSlug } = body;
 
   const coach = await getCoachById(coachId);
   const option = await getCoachingOptionById(coachingOptionId);
@@ -46,9 +46,12 @@ export async function POST(request: NextRequest) {
     throw err;
   }
 
-  // Try Stripe checkout
+  // Stripe checkout
   const stripeKey = process.env.STRIPE_SECRET_KEY;
-  if (stripeKey && stripeKey !== "sk_test_placeholder") {
+  const stripeConfigured = stripeKey && stripeKey !== "sk_test_placeholder";
+
+  if (stripeConfigured) {
+    // Stripe IS configured — payment is required, errors must NOT fall through to demo mode
     try {
       const Stripe = (await import("stripe")).default;
       const stripe = new Stripe(stripeKey);
@@ -80,7 +83,7 @@ export async function POST(request: NextRequest) {
           studentId,
         },
         success_url: `${request.nextUrl.origin}/booking/success?session_id={CHECKOUT_SESSION_ID}&booking=${bookingId}`,
-        cancel_url: `${request.nextUrl.origin}/games/league-of-legends/coach/${coach.slug}`,
+        cancel_url: `${request.nextUrl.origin}/games/${gameSlug || 'league-of-legends'}/coach/${coach.slug}`,
       });
 
       // Save Stripe session ID to booking
@@ -91,11 +94,29 @@ export async function POST(request: NextRequest) {
 
       return Response.json({ url: session.url });
     } catch (err: unknown) {
-      console.error("Stripe error:", err);
+      console.error("❌ Stripe checkout error:", err);
+
+      // Cancel the pending booking since payment failed
+      try {
+        const { adminDb } = await import("@/lib/firebase-admin");
+        await adminDb.collection("bookings").doc(bookingId).update({
+          status: "cancelled",
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (cleanupErr) {
+        console.error("Failed to cancel booking after Stripe error:", cleanupErr);
+      }
+
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      return Response.json(
+        { error: `Error al procesar el pago: ${message}` },
+        { status: 500 }
+      );
     }
   }
 
-  // Demo mode: confirm booking directly
+  // Demo mode: only when Stripe is NOT configured at all
+  console.warn("⚠️ Stripe not configured — confirming booking in demo mode");
   const { adminDb } = await import("@/lib/firebase-admin");
   await adminDb.collection("bookings").doc(bookingId).update({
     status: "confirmed",

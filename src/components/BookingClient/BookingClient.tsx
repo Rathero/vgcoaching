@@ -124,6 +124,7 @@ export default function BookingClient({ coach, gameData, options, availability, 
           studentEmail,
           notes,
           idToken,
+          gameSlug,
         }),
       });
       const data = await res.json();
