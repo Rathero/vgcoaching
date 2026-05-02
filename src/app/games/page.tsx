@@ -4,6 +4,8 @@ import Footer from "@/components/Footer/Footer";
 import { getGames } from "@/lib/firestore";
 import styles from "./page.module.css";
 
+export const dynamic = "force-dynamic";
+
 export default async function GamesPage() {
   const games = await getGames();
 
