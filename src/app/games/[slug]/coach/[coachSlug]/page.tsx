@@ -3,7 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import BookingSidebar from "@/components/BookingSidebar/BookingSidebar";
-import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, rankColors } from "@/lib/firestore";
+import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, getCommissionRate, rankColors } from "@/lib/firestore";
 import styles from "./page.module.css";
 
 export default async function CoachProfilePage(props: PageProps<"/games/[slug]/coach/[coachSlug]">) {
@@ -18,6 +18,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
   const options = await getCoachOptions(coach.id);
   const reviews = await getCoachReviews(coach.id);
   const rankColor = rankColors[gameData.rankTier];
+  const commissionRate = getCommissionRate(coach);
 
   return (
     <>
@@ -47,6 +48,16 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                   </div>
                   <div className={styles.languages}>
                     {coach.languages.map(l => <span key={l} className={styles.langTag}>🗣️ {l}</span>)}
+                    {coach.discordUsername && (
+                      <span className={styles.langTag} style={{ background: 'rgba(88,101,242,0.12)', color: '#5865F2', borderColor: 'rgba(88,101,242,0.3)' }}>
+                        🎮 {coach.discordUsername}
+                      </span>
+                    )}
+                    {coach.riotGameName && (
+                      <span className={styles.langTag} style={{ background: 'rgba(210,60,60,0.12)', color: '#D23C3C', borderColor: 'rgba(210,60,60,0.3)' }}>
+                        ⚔️ {coach.riotGameName}#{coach.riotTagLine}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -79,28 +90,74 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
 
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>💬 Opiniones ({reviews.length})</h2>
-                {reviews.map(r => (
-                  <div key={r.id} className={`glass-card ${styles.reviewCard}`}>
-                    <div className={styles.reviewHeader}>
-                      <div className={styles.reviewAvatar}>{r.studentAvatar}</div>
-                      <div style={{ flex: 1 }}>
-                        <div className={styles.reviewName}>{r.studentName}</div>
-                        <div className={styles.reviewMeta}>{r.sessionsCount} sesiones · {r.createdAt}</div>
-                      </div>
-                      <span className={styles.reviewStars}>{"⭐".repeat(r.rating)}</span>
+
+                {/* Rating summary */}
+                {reviews.length > 0 && (
+                  <div className={`glass-card ${styles.ratingSummary}`}>
+                    <div className={styles.ratingBigNumber}>
+                      <span className={styles.ratingValue}>{coach.ratingAvg}</span>
+                      <span className={styles.ratingMax}>/5</span>
                     </div>
-                    <p className={styles.reviewText}>&ldquo;{r.comment}&rdquo;</p>
-                    <div className={styles.reviewRank}>
-                      <span className={styles.rankFrom}>{r.rankBefore}</span>
-                      <span className={styles.rankArrow}>→</span>
-                      <span className={styles.rankTo}>{r.rankAfter}</span>
+                    <div className={styles.ratingStarsLarge}>
+                      {[1, 2, 3, 4, 5].map(s => (
+                        <span key={s} className={s <= Math.round(coach.ratingAvg) ? styles.starFilledLg : styles.starEmptyLg}>★</span>
+                      ))}
+                    </div>
+                    <span className={styles.ratingCount}>{reviews.length} valoracion{reviews.length !== 1 ? "es" : ""}</span>
+                    <div className={styles.ratingBars}>
+                      {[5, 4, 3, 2, 1].map(star => {
+                        const count = reviews.filter(r => r.rating === star).length;
+                        const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                        return (
+                          <div key={star} className={styles.ratingBarRow}>
+                            <span className={styles.ratingBarLabel}>{star}★</span>
+                            <div className={styles.ratingBarTrack}>
+                              <div className={styles.ratingBarFill} style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className={styles.ratingBarCount}>{count}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-                ))}
+                )}
+
+                {reviews.map(r => {
+                  const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }) : "";
+                  return (
+                    <div key={r.id} className={`glass-card ${styles.reviewCard}`}>
+                      <div className={styles.reviewHeader}>
+                        <div className={styles.reviewAvatar}>{r.studentAvatar || "🎮"}</div>
+                        <div style={{ flex: 1 }}>
+                          <div className={styles.reviewName}>{r.studentName}</div>
+                          <div className={styles.reviewMeta}>
+                            {r.sessionsCount ? `${r.sessionsCount} sesiones · ` : ""}{dateStr}
+                          </div>
+                        </div>
+                        <span className={styles.reviewStars}>{"⭐".repeat(r.rating)}</span>
+                      </div>
+                      {r.comment && <p className={styles.reviewText}>&ldquo;{r.comment}&rdquo;</p>}
+                      {r.rankBefore && r.rankAfter && (
+                        <div className={styles.reviewRank}>
+                          <span className={styles.rankFrom}>{r.rankBefore}</span>
+                          <span className={styles.rankArrow}>→</span>
+                          <span className={styles.rankTo}>{r.rankAfter}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {reviews.length === 0 && (
+                  <div className={styles.noReviews}>
+                    <span>📝</span>
+                    <p>Aún no hay valoraciones. ¡Sé el primero!</p>
+                  </div>
+                )}
               </div>
             </div>
 
-            <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} />
+            <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} commissionRate={commissionRate} />
           </div>
         </div>
       </div>

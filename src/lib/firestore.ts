@@ -1,5 +1,5 @@
 import { adminDb } from "./firebase-admin";
-import type { Game, Coach, CoachGame, CoachingOption, Review, Availability, Booking, UserProfile, SessionMaterial } from "./types";
+import type { Game, Coach, CoachGame, CoachingOption, Review, Availability, Booking, UserProfile, SessionMaterial, CoachApplication, Masterclass, MasterclassRegistration } from "./types";
 
 // ─── Games ───────────────────────────────────────────────
 export async function getGames(): Promise<Game[]> {
@@ -179,6 +179,49 @@ export async function getCoachReviews(coachId: string): Promise<Review[]> {
     .sort((a, b) => (b.createdAt || "").localeCompare(a.createdAt || ""));
 }
 
+export async function getReviewByBookingId(bookingId: string): Promise<Review | null> {
+  const snap = await adminDb.collection("reviews")
+    .where("bookingId", "==", bookingId)
+    .limit(1).get();
+  if (snap.empty) return null;
+  return { id: snap.docs[0].id, ...snap.docs[0].data() } as Review;
+}
+
+export async function createReview(data: {
+  bookingId: string;
+  coachId: string;
+  studentId: string;
+  studentName: string;
+  studentAvatar: string;
+  rating: number;
+  comment: string;
+}): Promise<string> {
+  // Prevent duplicate reviews per booking
+  const existing = await getReviewByBookingId(data.bookingId);
+  if (existing) throw new Error("ALREADY_REVIEWED");
+
+  const ref = await adminDb.collection("reviews").add({
+    ...data,
+    createdAt: new Date().toISOString(),
+  });
+
+  // Recalculate and update coach's average rating
+  await recalculateCoachRating(data.coachId);
+
+  return ref.id;
+}
+
+async function recalculateCoachRating(coachId: string): Promise<void> {
+  const reviews = await getCoachReviews(coachId);
+  if (reviews.length === 0) return;
+
+  const avg = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+  await adminDb.collection("coaches").doc(coachId).update({
+    ratingAvg: Math.round(avg * 10) / 10,
+    totalSessions: reviews.length,
+  });
+}
+
 // ─── User Profiles ───────────────────────────────────────
 export async function createOrUpdateUserProfile(uid: string, data: {
   displayName: string;
@@ -284,6 +327,58 @@ export async function getSessionMaterials(bookingId: string): Promise<SessionMat
   const snap = await adminDb.collection("bookings").doc(bookingId)
     .collection("materials").orderBy("createdAt", "asc").get();
   return snap.docs.map(d => ({ id: d.id, ...d.data() } as SessionMaterial));
+}
+
+// ─── Commission ──────────────────────────────────────────
+export function getCommissionRate(coach?: Coach | null): number {
+  // Per-coach override takes priority
+  if (coach?.commissionRate !== undefined && coach.commissionRate !== null) {
+    return coach.commissionRate;
+  }
+  // Fall back to platform default from env
+  const envRate = process.env.PLATFORM_COMMISSION_RATE;
+  return envRate ? parseFloat(envRate) : 0.05;
+}
+
+export function calculateCommission(priceCents: number, commissionRate: number): { totalCents: number; commissionCents: number } {
+  const commissionCents = Math.round(priceCents * commissionRate);
+  return { totalCents: priceCents + commissionCents, commissionCents };
+}
+
+// ─── Coach Applications ──────────────────────────────────
+export async function createCoachApplication(data: Omit<CoachApplication, 'id' | 'status' | 'createdAt'>): Promise<string> {
+  const ref = await adminDb.collection("coachApplications").add({
+    ...data,
+    status: "pending",
+    createdAt: new Date().toISOString(),
+  });
+  return ref.id;
+}
+
+export async function getCoachApplicationByUserId(userId: string): Promise<CoachApplication | null> {
+  const snap = await adminDb.collection("coachApplications")
+    .where("userId", "==", userId)
+    .limit(1).get();
+  if (snap.empty) return null;
+  return { id: snap.docs[0].id, ...snap.docs[0].data() } as CoachApplication;
+}
+
+// ─── Masterclasses ───────────────────────────────────────
+export async function getMasterclasses(status?: string): Promise<Masterclass[]> {
+  let q = adminDb.collection("masterclasses") as FirebaseFirestore.Query;
+  if (status) {
+    q = q.where("status", "==", status);
+  }
+  const snap = await q.get();
+  return snap.docs
+    .map(d => ({ id: d.id, ...d.data() } as Masterclass))
+    .sort((a, b) => `${a.scheduledDate}T${a.scheduledTime}`.localeCompare(`${b.scheduledDate}T${b.scheduledTime}`));
+}
+
+export async function getMasterclassById(id: string): Promise<Masterclass | null> {
+  const doc = await adminDb.collection("masterclasses").doc(id).get();
+  if (!doc.exists) return null;
+  return { id: doc.id, ...doc.data() } as Masterclass;
 }
 
 // ─── Helpers (re-export from utils for server convenience) ───

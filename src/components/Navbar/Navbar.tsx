@@ -121,6 +121,9 @@ export default function Navbar() {
             )}
           </div>
 
+          <Link href="/masterclass" className={styles.navLink}>
+            Masterclass
+          </Link>
           <a href="/#como-funciona" className={styles.navLink}>
             Cómo funciona
           </a>
@@ -134,16 +137,16 @@ export default function Navbar() {
             <>
               {user ? (
                 <div className={styles.userMenu}>
-                  <Link href="/dashboard" className="btn btn-ghost" style={{ fontSize: "0.85rem" }}>
-                    📋 Mi Panel
+                  <Link href="/dashboard" className={styles.userLink}>
+                    <span className={styles.userAvatar}>
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt="" width={28} height={28} style={{ borderRadius: "50%" }} />
+                      ) : (
+                        user.displayName?.[0]?.toUpperCase() || "👤"
+                      )}
+                    </span>
+                    <span className={styles.userName}>{user.displayName || "Mi perfil"}</span>
                   </Link>
-                  <span className={styles.userAvatar}>
-                    {user.photoURL ? (
-                      <img src={user.photoURL} alt="" width={28} height={28} style={{ borderRadius: "50%" }} />
-                    ) : (
-                      user.displayName?.[0]?.toUpperCase() || "👤"
-                    )}
-                  </span>
                   <button className="btn btn-ghost" onClick={signOut}>Salir</button>
                 </div>
               ) : (

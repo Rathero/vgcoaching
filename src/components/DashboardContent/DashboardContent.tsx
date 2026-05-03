@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import type { Booking } from "@/lib/types";
+import SessionReview from "@/components/SessionReview/SessionReview";
 import styles from "./DashboardContent.module.css";
 
 interface EnrichedBooking extends Booking {
@@ -20,6 +21,8 @@ export default function DashboardContent() {
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [now, setNow] = useState(new Date());
+  const [reviewedBookings, setReviewedBookings] = useState<Set<string>>(new Set());
+  const [reviewingBookingId, setReviewingBookingId] = useState<string | null>(null);
 
   // Update clock every 30s for countdown
   useEffect(() => {
@@ -38,6 +41,26 @@ export default function DashboardContent() {
         const data = await res.json();
         setStudentBookings(data.studentBookings || []);
         setCoachBookings(data.coachBookings || []);
+
+        // Check review status for past student bookings
+        const pastStudentBookings = (data.studentBookings || []).filter(
+          (b: Booking) => b.status === "completed" || b.sessionStatus === "completed"
+        );
+        const reviewed = new Set<string>();
+        await Promise.all(
+          pastStudentBookings.map(async (b: Booking) => {
+            try {
+              const reviewRes = await fetch(`/api/session/review?bookingId=${b.id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              if (reviewRes.ok) {
+                const reviewData = await reviewRes.json();
+                if (reviewData.review) reviewed.add(b.id);
+              }
+            } catch { /* ignore */ }
+          })
+        );
+        setReviewedBookings(reviewed);
       }
     } catch (err) {
       console.error("Failed to fetch dashboard:", err);
@@ -203,9 +226,36 @@ export default function DashboardContent() {
               <Link href={`/session/${booking.id}/prep`} className={styles.historyBtn}>
                 📋 Ver historial
               </Link>
+              {booking._role === "student" && !reviewedBookings.has(booking.id) && (
+                <button
+                  className={styles.reviewBtn}
+                  onClick={() => setReviewingBookingId(
+                    reviewingBookingId === booking.id ? null : booking.id
+                  )}
+                >
+                  ⭐ Valorar
+                </button>
+              )}
+              {booking._role === "student" && reviewedBookings.has(booking.id) && (
+                <span className={styles.reviewedBadge}>✓ Valorado</span>
+              )}
             </>
           )}
         </div>
+
+        {/* Inline review form */}
+        {reviewingBookingId === booking.id && booking._role === "student" && (
+          <div className={styles.reviewSection}>
+            <SessionReview
+              bookingId={booking.id}
+              coachName={(booking as EnrichedBooking).coachDisplayName || "Coach"}
+              onReviewSubmitted={() => {
+                setReviewedBookings(prev => new Set([...prev, booking.id]));
+                setReviewingBookingId(null);
+              }}
+            />
+          </div>
+        )}
       </div>
     );
   };
@@ -220,11 +270,18 @@ export default function DashboardContent() {
             <h1>Mi Panel</h1>
             <p>Gestiona tus sesiones de coaching</p>
           </div>
-          {profile && (
-            <span className={`${styles.roleTag} ${profile.role === "coach" ? styles.roleCoach : styles.roleClient}`}>
-              {profile.role === "coach" ? "👨‍🏫 Coach" : "🎓 Jugador"}
-            </span>
-          )}
+          <div className={styles.headerActions}>
+            {profile && profile.role !== "coach" && profile.coachApplicationStatus !== "pending" && (
+              <Link href="/become-coach" className={styles.becomeCoachBtn}>
+                🏆 Ser Coach
+              </Link>
+            )}
+            {profile && (
+              <span className={`${styles.roleTag} ${profile.role === "coach" ? styles.roleCoach : styles.roleClient}`}>
+                {profile.role === "coach" ? "👨‍🏫 Coach" : "🎓 Jugador"}
+              </span>
+            )}
+          </div>
         </div>
 
         <div className={styles.tabs}>
@@ -266,6 +323,94 @@ export default function DashboardContent() {
             {currentList.map((b, i) => renderBookingCard(b, i))}
           </div>
         )}
+
+        {/* Connections Section — only show when at least one integration is configured */}
+        {(() => {
+          const riotConfigured = !!process.env.NEXT_PUBLIC_RIOT_CONFIGURED;
+          const discordConfigured = !!process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID && process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID !== "your-discord-client-id";
+          if (!riotConfigured && !discordConfigured) return null;
+          return (
+            <div className={styles.connectionsSection}>
+              <h2 className={styles.connectionsTitle}>🔗 Conexiones</h2>
+              <div className={styles.connectionsGrid}>
+                {/* Riot Games */}
+                {riotConfigured && (
+                  <div className={`glass-card ${styles.connectionCard}`}>
+                    <div className={styles.connectionHeader}>
+                      <span className={styles.connectionIcon}>⚔️</span>
+                      <div>
+                        <strong>Riot Games</strong>
+                        <span className={styles.connectionDesc}>
+                          {profile?.riotGameName
+                            ? `${profile.riotGameName}#${profile.riotTagLine}`
+                            : "Conecta tu cuenta de LoL"}
+                        </span>
+                      </div>
+                    </div>
+                    {profile?.riotGameName ? (
+                      <div className={styles.connectionConnected}>
+                        <span className={styles.connectedBadge}>✅ Conectado</span>
+                        {profile.riotRank && <span className={styles.riotRank}>{profile.riotRank}</span>}
+                        {profile.riotWinRate ? <span className={styles.riotWr}>{profile.riotWinRate}% WR</span> : null}
+                      </div>
+                    ) : (
+                      <button
+                        className={styles.connectBtn}
+                        onClick={async () => {
+                          const gameName = prompt("Introduce tu Riot ID (ej: Player):");
+                          const tagLine = prompt("Introduce tu tagline (ej: EUW):");
+                          if (!gameName || !tagLine || !user) return;
+                          try {
+                            const token = await user.getIdToken();
+                            const res = await fetch("/api/riot/link", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                              body: JSON.stringify({ gameName, tagLine, region: "euw" }),
+                            });
+                            const data = await res.json();
+                            if (res.ok) {
+                              alert(`✅ Cuenta vinculada: ${data.data.gameName}#${data.data.tagLine} — ${data.data.rank}`);
+                              window.location.reload();
+                            } else {
+                              alert(`❌ ${data.error}`);
+                            }
+                          } catch { alert("Error de conexión"); }
+                        }}
+                      >
+                        Conectar
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Discord */}
+                {discordConfigured && (
+                  <div className={`glass-card ${styles.connectionCard}`}>
+                    <div className={styles.connectionHeader}>
+                      <span className={styles.connectionIcon} style={{ color: "#5865F2" }}>🎮</span>
+                      <div>
+                        <strong>Discord</strong>
+                        <span className={styles.connectionDesc}>
+                          {profile?.discordUsername || "Conecta tu cuenta de Discord"}
+                        </span>
+                      </div>
+                    </div>
+                    {profile?.discordUsername ? (
+                      <span className={styles.connectedBadge}>✅ {profile.discordUsername}</span>
+                    ) : (
+                      <a
+                        className={styles.connectBtn}
+                        href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || ""}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI || "")}&response_type=code&scope=identify&state=${user?.uid || ""}`}
+                      >
+                        Conectar
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

@@ -36,6 +36,39 @@
 .rankFrom { color: var(--color-text-muted); text-decoration: line-through; }
 .rankArrow { color: var(--color-success); }
 .rankTo { color: var(--color-success); font-weight: 700; }
+
+/* Rating Summary */
+.ratingSummary {
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+.ratingBigNumber { display: flex; align-items: baseline; gap: 2px; }
+.ratingValue { font-size: 3rem; font-weight: 700; font-family: var(--font-mono); color: var(--color-warning); }
+.ratingMax { font-size: 1.2rem; color: var(--color-text-muted); font-family: var(--font-mono); }
+.ratingStarsLarge { display: flex; gap: 4px; }
+.starFilledLg { font-size: 1.5rem; color: var(--color-warning); filter: drop-shadow(0 0 4px rgba(255, 200, 87, 0.4)); }
+.starEmptyLg { font-size: 1.5rem; color: var(--color-border-light); }
+.ratingCount { font-size: 0.85rem; color: var(--color-text-secondary); }
+.ratingBars { width: 100%; max-width: 300px; display: flex; flex-direction: column; gap: 6px; margin-top: var(--space-sm); }
+.ratingBarRow { display: flex; align-items: center; gap: var(--space-sm); }
+.ratingBarLabel { font-size: 0.75rem; font-family: var(--font-mono); color: var(--color-text-muted); width: 28px; text-align: right; flex-shrink: 0; }
+.ratingBarTrack { flex: 1; height: 8px; border-radius: var(--radius-full); background: var(--color-bg-subtle); overflow: hidden; }
+.ratingBarFill { height: 100%; border-radius: var(--radius-full); background: linear-gradient(90deg, var(--color-warning), #ffb300); transition: width 0.6s ease; }
+.ratingBarCount { font-size: 0.75rem; font-family: var(--font-mono); color: var(--color-text-muted); width: 20px; flex-shrink: 0; }
+
+/* No Reviews */
+.noReviews {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+.noReviews span { font-size: 2rem; display: block; margin-bottom: var(--space-sm); opacity: 0.5; }
+
 /* Sticky booking sidebar */
 .sidebarWrap { position: sticky; top: calc(var(--navbar-height) + var(--space-lg)); }
 .bookingCard { padding: var(--space-xl); }

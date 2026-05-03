@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/auth-context";
 import SessionTimer from "@/components/SessionTimer/SessionTimer";
 import SessionChat from "@/components/SessionChat/SessionChat";
 import SessionMaterials from "@/components/SessionMaterials/SessionMaterials";
+import SessionReview from "@/components/SessionReview/SessionReview";
 import styles from "./page.module.css";
 
 interface SessionData {
@@ -41,6 +42,7 @@ export default function SessionPage({ params }: { params: Promise<{ bookingId: s
   const [isRecording, setIsRecording] = useState(false);
   const [recordingUrl, setRecordingUrl] = useState<string | null>(null);
   const [recordingStatus, setRecordingStatus] = useState<string>("none");
+  const [reviewSubmitted, setReviewSubmitted] = useState(false);
 
   const fetchToken = useCallback(async () => {
     if (!user) return;
@@ -222,6 +224,9 @@ export default function SessionPage({ params }: { params: Promise<{ bookingId: s
 
   // Session ended overlay
   if (sessionEnded) {
+    const isCoach = sessionData?.isCoach ?? false;
+    const coachName = sessionData?.booking?.studentName || "tu coach";
+
     return (
       <div className={styles.endedOverlay}>
         <span className={styles.endedIcon}>✅</span>
@@ -251,6 +256,15 @@ export default function SessionPage({ params }: { params: Promise<{ bookingId: s
             </div>
           ) : null}
         </div>
+
+        {/* Review form (students only) */}
+        {!isCoach && !reviewSubmitted && (
+          <SessionReview
+            bookingId={bookingId}
+            coachName={coachName}
+            onReviewSubmitted={() => setReviewSubmitted(true)}
+          />
+        )}
 
         <div className={styles.endedActions}>
           <Link href="/dashboard" className="btn btn-primary">Ir al panel</Link>

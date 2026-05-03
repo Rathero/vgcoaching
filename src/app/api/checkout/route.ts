@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getCoachById, getCoachingOptionById, createBooking } from "@/lib/firestore";
+import { getCoachById, getCoachingOptionById, createBooking, getCommissionRate, calculateCommission } from "@/lib/firestore";
 import { adminAuth } from "@/lib/firebase-admin";
 
 export async function POST(request: NextRequest) {
@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
   if (!coach || !option) {
     return Response.json({ error: "Invalid coach or option" }, { status: 400 });
   }
+
+  // Calculate commission
+  const commissionRate = getCommissionRate(coach);
+  const { totalCents, commissionCents } = calculateCommission(option.priceCents, commissionRate);
 
   // Verify Firebase auth token if provided
   let studentId = "guest";
@@ -39,12 +43,23 @@ export async function POST(request: NextRequest) {
       amountCents: option.priceCents,
       status: "pending",
     });
+
+    // Store commission info on the booking
+    const { adminDb } = await import("@/lib/firebase-admin");
+    await adminDb.collection("bookings").doc(bookingId).update({
+      commissionCents,
+    });
   } catch (err: unknown) {
     if (err instanceof Error && err.message === "SLOT_TAKEN") {
       return Response.json({ error: "Este horario ya está reservado. Elige otro." }, { status: 409 });
     }
     throw err;
   }
+
+  // Build description with group coaching info
+  const isGroup = option.type === "group_coaching";
+  const productName = `${option.name} con ${coach.displayName}${isGroup ? " (Equipo de 5)" : ""}`;
+  const productDesc = `${option.durationMinutes} min · ${scheduledDate} a las ${scheduledTime}`;
 
   // Stripe checkout
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -65,10 +80,10 @@ export async function POST(request: NextRequest) {
             price_data: {
               currency: "eur",
               product_data: {
-                name: `${option.name} con ${coach.displayName}`,
-                description: `${option.durationMinutes} min · ${scheduledDate} a las ${scheduledTime}`,
+                name: productName,
+                description: productDesc,
               },
-              unit_amount: option.priceCents,
+              unit_amount: totalCents, // Price + commission
             },
             quantity: 1,
           },
@@ -81,6 +96,8 @@ export async function POST(request: NextRequest) {
           scheduledTime,
           studentName,
           studentId,
+          commissionCents: commissionCents.toString(),
+          basePriceCents: option.priceCents.toString(),
         },
         success_url: `${request.nextUrl.origin}/booking/success?session_id={CHECKOUT_SESSION_ID}&booking=${bookingId}`,
         cancel_url: `${request.nextUrl.origin}/games/${gameSlug || 'league-of-legends'}/coach/${coach.slug}`,

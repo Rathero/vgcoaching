@@ -25,7 +25,28 @@ export interface Coach {
   totalSessions: number;
   totalStudents: number;
   eloUpRate: number; // % of students that ranked up
+  commissionRate?: number; // per-coach commission override (e.g. 0.03 = 3%)
+  // Riot integration
+  riotPuuid?: string;
+  riotGameName?: string;
+  riotTagLine?: string;
+  riotRank?: string;
+  riotTier?: string;
+  riotWinRate?: number;
+  riotTopChampions?: RiotChampionStat[];
+  riotPreferredRole?: string;
+  // Discord integration
+  discordId?: string;
+  discordUsername?: string;
+  discordAvatar?: string;
   createdAt: string;
+}
+
+export interface RiotChampionStat {
+  name: string;
+  games: number;
+  winRate: number;
+  kda: number;
 }
 
 export interface CoachGame {
@@ -48,12 +69,13 @@ export interface CoachingOption {
   id: string;
   coachId: string;
   gameId: string;
-  type: "live_coaching" | "vod_review" | "duo_coaching" | "champion_specific";
+  type: "live_coaching" | "vod_review" | "duo_coaching" | "champion_specific" | "group_coaching";
   name: string;
   description: string;
   durationMinutes: number;
   priceCents: number;
   active: boolean;
+  maxPlayers?: number; // for group_coaching (default 5)
 }
 
 export interface Availability {
@@ -71,14 +93,16 @@ export interface TimeSlot {
 
 export interface Review {
   id: string;
+  bookingId: string;
   coachId: string;
+  studentId: string;
   studentName: string;
   studentAvatar: string;
   rating: number;
   comment: string;
-  rankBefore: string;
-  rankAfter: string;
-  sessionsCount: number;
+  rankBefore?: string;
+  rankAfter?: string;
+  sessionsCount?: number;
   createdAt: string;
 }
 
@@ -104,6 +128,7 @@ export interface Booking {
   status: "pending" | "confirmed" | "completed" | "cancelled";
   notes: string;
   amountCents: number;
+  commissionCents?: number; // commission charged on this booking
   stripeSessionId?: string;
   // Session fields
   sessionStatus?: "scheduled" | "live" | "completed";
@@ -124,6 +149,19 @@ export interface UserProfile {
   role: "client" | "coach";
   coachId?: string;
   coachApplicationStatus?: "none" | "pending" | "approved" | "rejected";
+  // Riot integration
+  riotPuuid?: string;
+  riotGameName?: string;
+  riotTagLine?: string;
+  riotRank?: string;
+  riotTier?: string;
+  riotWinRate?: number;
+  riotTopChampions?: RiotChampionStat[];
+  riotPreferredRole?: string;
+  // Discord integration
+  discordId?: string;
+  discordUsername?: string;
+  discordAvatar?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -149,6 +187,70 @@ export interface SessionMaterial {
   fileName?: string;
   fileSize?: number;
   thumbnailUrl?: string;
+  createdAt: string;
+}
+
+// ─── Masterclass ─────────────────────────────────────────
+export interface Masterclass {
+  id: string;
+  title: string;
+  description: string;
+  longDescription: string;
+  coachId: string;
+  coachName: string;
+  coachAvatar: string;
+  gameId: string;
+  topic: string;
+  tags: string[];
+  scheduledDate: string; // ISO date
+  scheduledTime: string; // "18:00"
+  durationMinutes: number;
+  priceCents: number; // 2000 = 20€
+  maxAttendees: number;
+  currentAttendees: number;
+  status: "upcoming" | "live" | "completed" | "cancelled";
+  imageUrl?: string;
+  livekitRoom?: string;
+  createdAt: string;
+}
+
+export interface MasterclassRegistration {
+  id: string;
+  masterclassId: string;
+  userId: string;
+  userName: string;
+  userEmail: string;
+  stripeSessionId?: string;
+  status: "pending" | "confirmed" | "cancelled";
+  createdAt: string;
+}
+
+// ─── Coach Application ──────────────────────────────────
+export interface CoachApplication {
+  id: string;
+  userId: string;
+  displayName: string;
+  email: string;
+  avatarUrl: string;
+  gameId: string;
+  inGameName: string;
+  rank: string;
+  rankTier: "challenger" | "grandmaster" | "master" | "diamond";
+  roles: string[];
+  specialties: string[];
+  champions: string[];
+  bio: string;
+  longBio: string;
+  country: string;
+  languages: string[];
+  coachingTypes: string[]; // which coaching types they want to offer
+  // Pricing
+  liveCoachingPrice?: number;
+  vodReviewPrice?: number;
+  duoCoachingPrice?: number;
+  championSpecificPrice?: number;
+  groupCoachingPrice?: number;
+  status: "pending" | "approved" | "rejected";
   createdAt: string;
 }
 
