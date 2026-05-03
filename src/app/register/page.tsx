@@ -137,6 +137,11 @@ export default function RegisterPage() {
             <Link href="/login" className={styles.link}>Iniciar sesión</Link>
           </div>
 
+          <div className={styles.links} style={{ marginTop: 0 }}>
+            <span style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>¿Quieres ser coach?</span>
+            <Link href="/become-coach" className={styles.link} style={{ color: "var(--color-warning)" }}>🏆 Registrarse como coach</Link>
+          </div>
+
           <p className={styles.legal}>
             Al registrarte, aceptas nuestros <a href="#">Términos de Servicio</a> y <a href="#">Política de Privacidad</a>.
           </p>

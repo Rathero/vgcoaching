@@ -238,6 +238,19 @@
   overflow: hidden;
 }
 
+.userLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  text-decoration: none;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+.userLink:hover { color: var(--color-primary-light); }
+.userName { white-space: nowrap; }
+
 .mobileMenuBtn {
   display: none;
   flex-direction: column;
