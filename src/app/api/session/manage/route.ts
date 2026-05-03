@@ -63,11 +63,17 @@ export async function POST(req: NextRequest) {
     const profile = await getUserProfile(uid);
     const isStudent = booking.studentId === uid;
     const isCoach = profile?.role === "coach" && profile?.coachId === booking.coachId;
-    if (!isStudent && !isCoach) {
+    const isInvitedPlayer = booking.isGroupSession && booking.invitedPlayers?.some(
+      (p: { uid?: string; status: string }) => p.uid === uid && p.status === "accepted"
+    );
+    const isShadowParticipant = !!booking.parentBookingId && booking.studentId === uid;
+
+    if (!isStudent && !isCoach && !isInvitedPlayer && !isShadowParticipant) {
       return NextResponse.json({ error: "Not a participant" }, { status: 403 });
     }
 
-    const roomName = `session-${bookingId}`;
+    const effectiveBookingId = booking.parentBookingId || bookingId;
+    const roomName = `session-${effectiveBookingId}`;
 
     if (action === "start") {
       // Skip if already live (avoid duplicate recordings)

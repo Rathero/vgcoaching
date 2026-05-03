@@ -1,0 +1,141 @@
+.panel {
+  margin-top: var(--space-md);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-md);
+}
+
+.title { font-size: 0.9rem; font-weight: 700; margin: 0; }
+.spotsCount {
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(124,92,252,0.1);
+  color: var(--color-primary-light);
+}
+
+/* Slots */
+.slots {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.slot {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  font-size: 0.8rem;
+  flex: 1;
+  min-width: 140px;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.slotFilled { border-style: solid; }
+.slotEmpty { border-style: dashed; opacity: 0.5; }
+
+.slotOwner { border-color: var(--color-warning); background: rgba(255,200,87,0.06); }
+.slotAccepted { border-color: var(--color-success); }
+.slotPending { border-color: var(--color-text-muted); }
+
+.slotAvatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem;
+  background: var(--color-bg-subtle);
+  flex-shrink: 0;
+}
+
+.slotInfo { display: flex; flex-direction: column; min-width: 0; }
+.slotName { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slotStatus { font-size: 0.65rem; color: var(--color-text-muted); font-family: var(--font-mono); }
+
+.slotRemove {
+  position: absolute;
+  top: 4px; right: 6px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  font-size: 0.6rem;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.slot:hover .slotRemove { opacity: 1; }
+
+/* Form */
+.form { padding-top: var(--space-md); border-top: 1px solid var(--color-border); }
+
+.formRow {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.input {
+  flex: 1;
+  min-width: 160px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+.input:focus { border-color: var(--color-primary); }
+.input::placeholder { color: var(--color-text-muted); }
+.inputSmall { max-width: 150px; }
+
+.inviteBtn {
+  padding: 8px 20px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+.inviteBtn:hover { background: var(--color-primary-dark); }
+.inviteBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.hint {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-sm);
+  line-height: 1.5;
+}
+
+.error {
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgba(239,68,68,0.08);
+  color: #ef4444;
+  font-size: 0.75rem;
+  margin-bottom: var(--space-sm);
+}

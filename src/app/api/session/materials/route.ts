@@ -29,11 +29,15 @@ export async function POST(req: NextRequest) {
     const profile = await getUserProfile(uid);
     const isStudent = booking.studentId === uid;
     const isCoach = profile?.role === "coach" && profile?.coachId === booking.coachId;
+    const isInvitedPlayer = booking.isGroupSession && booking.invitedPlayers?.some(
+      (p: { uid?: string; status: string }) => p.uid === uid && p.status === "accepted"
+    );
+    const isShadowParticipant = !!booking.parentBookingId && booking.studentId === uid;
 
     console.log("[materials] uid:", uid, "booking.studentId:", booking.studentId, "isStudent:", isStudent, "isCoach:", isCoach);
 
-    if (!isStudent && !isCoach) {
-      return NextResponse.json({ error: "Not a participant", debug: { uid, studentId: booking.studentId } }, { status: 403 });
+    if (!isStudent && !isCoach && !isInvitedPlayer && !isShadowParticipant) {
+      return NextResponse.json({ error: "Not a participant" }, { status: 403 });
     }
 
     const materialId = await addSessionMaterial(bookingId, {

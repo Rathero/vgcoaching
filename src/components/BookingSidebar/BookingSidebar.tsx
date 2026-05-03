@@ -49,7 +49,9 @@ export default function BookingSidebar({ options, coachSlug, gameSlug, commissio
                     {TYPE_ICONS[opt.type] || "🎮"} {opt.name}
                   </div>
                   {opt.type === "group_coaching" && (
-                    <span className={styles.groupBadge}>👥 Equipo</span>
+                    <span className={styles.groupBadge}>
+                      {(opt.maxPlayers || 5) <= 2 ? "👥 Duo" : "👥 Equipo"}
+                    </span>
                   )}
                 </div>
                 <div className={styles.optionDesc}>{opt.description}</div>

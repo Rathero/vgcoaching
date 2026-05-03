@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
 import type { Booking } from "@/lib/types";
 import SessionReview from "@/components/SessionReview/SessionReview";
+import GroupInvitePanel from "@/components/GroupInvitePanel/GroupInvitePanel";
 import styles from "./DashboardContent.module.css";
 
 interface EnrichedBooking extends Booking {
@@ -23,6 +24,7 @@ export default function DashboardContent() {
   const [now, setNow] = useState(new Date());
   const [reviewedBookings, setReviewedBookings] = useState<Set<string>>(new Set());
   const [reviewingBookingId, setReviewingBookingId] = useState<string | null>(null);
+  const [userToken, setUserToken] = useState<string>("");
 
   // Update clock every 30s for countdown
   useEffect(() => {
@@ -34,6 +36,7 @@ export default function DashboardContent() {
     if (!user) return;
     try {
       const token = await user.getIdToken();
+      setUserToken(token);
       const res = await fetch("/api/dashboard", {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -178,6 +181,14 @@ export default function DashboardContent() {
           <span className={`${styles.statusBadge} ${getStatusClass(booking)}`}>
             {getStatusLabel(booking)}
           </span>
+          {booking.isGroupSession && (
+            <span className={styles.groupTag}>
+              {booking.groupType === "duo" ? "👥 Duo" : "👥 Equipo"}
+            </span>
+          )}
+          {booking.parentBookingId && (
+            <span className={styles.invitedTag}>Invitado</span>
+          )}
         </div>
 
         <div className={styles.cardDetails}>
@@ -255,6 +266,15 @@ export default function DashboardContent() {
               }}
             />
           </div>
+        )}
+
+        {/* Group invite panel — only for the buyer of group sessions */}
+        {booking.isGroupSession && !booking.parentBookingId && booking._role === "student" && !isPast && userToken && (
+          <GroupInvitePanel
+            booking={booking}
+            userToken={userToken}
+            onUpdate={fetchData}
+          />
         )}
       </div>
     );

@@ -187,7 +187,25 @@ export default function SessionPage({ params }: { params: Promise<{ bookingId: s
     );
   }
 
-  // Error state
+  // Access denied — user is not an authorized participant
+  if (error === "Not a participant") {
+    return (
+      <div className={styles.errorPage}>
+        <span className={styles.errorIcon}>🔒</span>
+        <h1 className={styles.errorTitle}>Acceso denegado</h1>
+        <p className={styles.errorMsg}>
+          No tienes permiso para acceder a esta sesión. Solo el coach, el alumno
+          y los jugadores invitados pueden entrar.
+        </p>
+        <p className={styles.errorHint}>
+          Si crees que deberías tener acceso, contacta con la persona que reservó la sesión para que te invite.
+        </p>
+        <Link href="/dashboard" className="btn btn-primary">Volver al panel</Link>
+      </div>
+    );
+  }
+
+  // Generic error state
   if (error) {
     return (
       <div className={styles.errorPage}>

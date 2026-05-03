@@ -75,7 +75,15 @@ export interface CoachingOption {
   durationMinutes: number;
   priceCents: number;
   active: boolean;
-  maxPlayers?: number; // for group_coaching (default 5)
+  maxPlayers?: number; // for group_coaching: 2 (duo) or 5 (team)
+}
+
+export interface GroupPlayer {
+  uid?: string;        // Firebase UID (set once they accept/register)
+  email: string;       // Email used for the invite
+  displayName?: string;
+  status: "pending" | "accepted" | "declined";
+  invitedAt: string;
 }
 
 export interface Availability {
@@ -130,6 +138,13 @@ export interface Booking {
   amountCents: number;
   commissionCents?: number; // commission charged on this booking
   stripeSessionId?: string;
+  // Group coaching fields
+  isGroupSession?: boolean;
+  groupType?: "duo" | "team";
+  maxPlayers?: number;         // 2 for duo, 5 for team
+  invitedPlayers?: GroupPlayer[];
+  invitedBy?: string;          // set on "shadow" bookings for invited players
+  parentBookingId?: string;    // links invited player's booking to the original
   // Session fields
   sessionStatus?: "scheduled" | "live" | "completed";
   sessionStartedAt?: string;

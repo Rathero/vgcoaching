@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Create booking in Firestore with status "pending"
+  const isGroup = option.type === "group_coaching";
   let bookingId: string;
   try {
     bookingId = await createBooking({
@@ -44,11 +45,19 @@ export async function POST(request: NextRequest) {
       status: "pending",
     });
 
-    // Store commission info on the booking
+    // Store commission and group coaching info on the booking
     const { adminDb } = await import("@/lib/firebase-admin");
-    await adminDb.collection("bookings").doc(bookingId).update({
-      commissionCents,
-    });
+    const updateData: Record<string, unknown> = { commissionCents };
+
+    if (isGroup) {
+      const maxPlayers = option.maxPlayers || 5;
+      updateData.isGroupSession = true;
+      updateData.groupType = maxPlayers <= 2 ? "duo" : "team";
+      updateData.maxPlayers = maxPlayers;
+      updateData.invitedPlayers = []; // buyer fills this later via invite
+    }
+
+    await adminDb.collection("bookings").doc(bookingId).update(updateData);
   } catch (err: unknown) {
     if (err instanceof Error && err.message === "SLOT_TAKEN") {
       return Response.json({ error: "Este horario ya está reservado. Elige otro." }, { status: 409 });
@@ -56,9 +65,11 @@ export async function POST(request: NextRequest) {
     throw err;
   }
 
-  // Build description with group coaching info
-  const isGroup = option.type === "group_coaching";
-  const productName = `${option.name} con ${coach.displayName}${isGroup ? " (Equipo de 5)" : ""}`;
+  // Build description
+  const groupLabel = isGroup
+    ? (option.maxPlayers || 5) <= 2 ? " (Duo)" : " (Equipo de 5)"
+    : "";
+  const productName = `${option.name} con ${coach.displayName}${groupLabel}`;
   const productDesc = `${option.durationMinutes} min · ${scheduledDate} a las ${scheduledTime}`;
 
   // Stripe checkout

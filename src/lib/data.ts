@@ -90,9 +90,12 @@ export const coachingOptions: CoachingOption[] = [
   { id: "co13", coachId: "c6", gameId: "lol", type: "live_coaching", name: "Coaching en Vivo", description: "Sesión en vivo enfocada en mid lane y roaming.", durationMinutes: 60, priceCents: 3500, active: true },
   { id: "co14", coachId: "c6", gameId: "lol", type: "vod_review", name: "VOD Review", description: "Análisis detallado de tus replays de mid.", durationMinutes: 45, priceCents: 2500, active: true },
   { id: "co15", coachId: "c6", gameId: "lol", type: "champion_specific", name: "Assassin Masterclass", description: "Domina un assassin específico con un pro.", durationMinutes: 60, priceCents: 4000, active: true },
-  // Group coaching options
-  { id: "co16", coachId: "c1", gameId: "lol", type: "group_coaching", name: "Coaching de Equipo", description: "Sesión de coaching grupal para tu equipo completo (5 jugadores). Análisis de macro, rotaciones y comunicación.", durationMinutes: 90, priceCents: 12000, active: true, maxPlayers: 5 },
-  { id: "co17", coachId: "c3", gameId: "lol", type: "group_coaching", name: "Coaching de Equipo", description: "Coaching grupal enfocado en macro de equipo, control de objetivos y teamfighting.", durationMinutes: 90, priceCents: 15000, active: true, maxPlayers: 5 },
+  // Group coaching options — duo (2 players)
+  { id: "co16", coachId: "c1", gameId: "lol", type: "group_coaching", name: "Coaching Duo", description: "Sesión de coaching para ti y tu duo partner. Mejora la sinergia bot lane o jungle+mid.", durationMinutes: 60, priceCents: 5000, active: true, maxPlayers: 2 },
+  { id: "co17", coachId: "c3", gameId: "lol", type: "group_coaching", name: "Coaching Duo", description: "Coaching para duo enfocado en sinergias de lane, timing de roams y comunicación.", durationMinutes: 60, priceCents: 6000, active: true, maxPlayers: 2 },
+  // Group coaching options — team (5 players)
+  { id: "co18", coachId: "c1", gameId: "lol", type: "group_coaching", name: "Coaching de Equipo", description: "Sesión de coaching grupal para tu equipo completo (5 jugadores). Análisis de macro, rotaciones y comunicación.", durationMinutes: 90, priceCents: 12000, active: true, maxPlayers: 5 },
+  { id: "co19", coachId: "c3", gameId: "lol", type: "group_coaching", name: "Coaching de Equipo", description: "Coaching grupal enfocado en macro de equipo, control de objetivos y teamfighting.", durationMinutes: 90, priceCents: 15000, active: true, maxPlayers: 5 },
 ];
 
 export const reviews: Review[] = [

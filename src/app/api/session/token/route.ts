@@ -29,10 +29,19 @@ export async function POST(req: NextRequest) {
     const profile = await getUserProfile(uid);
     const isStudent = booking.studentId === uid;
     const isCoach = profile?.role === "coach" && profile?.coachId === booking.coachId;
+    // Check if user is an invited group player
+    const isInvitedPlayer = booking.isGroupSession && booking.invitedPlayers?.some(
+      p => p.uid === uid && p.status === "accepted"
+    );
+    // Check if this is a shadow booking pointing to a parent
+    const isShadowParticipant = !!booking.parentBookingId && booking.studentId === uid;
 
-    if (!isStudent && !isCoach) {
+    if (!isStudent && !isCoach && !isInvitedPlayer && !isShadowParticipant) {
       return NextResponse.json({ error: "Not a participant" }, { status: 403 });
     }
+
+    // For shadow bookings, use the parent booking's room name
+    const effectiveBookingId = booking.parentBookingId || bookingId;
 
     // Check time window — allow 10 min before scheduled time (skip in dev)
     if (process.env.NODE_ENV !== "development") {
@@ -58,7 +67,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "LiveKit not configured" }, { status: 500 });
     }
 
-    const roomName = `session-${bookingId}`;
+    const roomName = `session-${effectiveBookingId}`;
     const participantName = profile?.displayName || decoded.name || "Participant";
 
     const at = new AccessToken(apiKey, apiSecret, {
