@@ -20,32 +20,29 @@ export default function Footer() {
             </p>
             <div className={styles.socials}>
               <a
-                href="#"
+                href="https://x.com/dargog_oficial"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={styles.socialLink}
-                aria-label="Discord"
-              >
-                💬
-              </a>
-              <a
-                href="#"
-                className={styles.socialLink}
-                aria-label="Twitter"
+                aria-label="X (Twitter)"
               >
                 𝕏
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/dargog_oficial/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={styles.socialLink}
                 aria-label="Instagram"
               >
                 📷
               </a>
               <a
-                href="#"
+                href="mailto:info.dargog@gmail.com"
                 className={styles.socialLink}
-                aria-label="YouTube"
+                aria-label="Email"
               >
-                ▶️
+                ✉️
               </a>
             </div>
           </div>
@@ -74,35 +71,32 @@ export default function Footer() {
             <h4>Plataforma</h4>
             <ul>
               <li>
-                <a href="#como-funciona">Cómo funciona</a>
+                <a href="/#como-funciona">Cómo funciona</a>
               </li>
               <li>
-                <a href="#coaches">Coaches</a>
+                <a href="/games">Coaches</a>
               </li>
               <li>
-                <a href="#">Hazte coach</a>
+                <a href="/become-coach">Hazte coach</a>
               </li>
               <li>
-                <a href="#">FAQ</a>
+                <a href="/masterclass">Masterclass</a>
               </li>
             </ul>
           </div>
 
-          {/* Empresa */}
+          {/* Contacto */}
           <div className={styles.column}>
-            <h4>Empresa</h4>
+            <h4>Contacto</h4>
             <ul>
               <li>
-                <a href="#">Sobre nosotros</a>
+                <a href="mailto:info.dargog@gmail.com">info.dargog@gmail.com</a>
               </li>
               <li>
-                <a href="#">Blog</a>
+                <a href="https://www.instagram.com/dargog_oficial/" target="_blank" rel="noopener noreferrer">Instagram</a>
               </li>
               <li>
-                <a href="#">Contacto</a>
-              </li>
-              <li>
-                <a href="#">Careers</a>
+                <a href="https://x.com/dargog_oficial" target="_blank" rel="noopener noreferrer">X (Twitter)</a>
               </li>
             </ul>
           </div>
@@ -110,7 +104,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className={styles.bottom}>
-          <p>© 2026 GamesCoaching. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} GamesCoaching. Todos los derechos reservados.</p>
           <div className={styles.bottomLinks}>
             <a href="#">Términos de servicio</a>
             <a href="#">Política de privacidad</a>
