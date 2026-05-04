@@ -1,25 +1,16 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n";
+import styles from "./page.module.css";
 
-export function MasterclassHeader() {
+export function MasterclassBadge() {
   const { t } = useI18n();
-  return (
-    <>
-      <span>{t("masterclassPage", "badge")}</span>
-      <p>{t("masterclassPage", "subtitle")}</p>
-    </>
-  );
+  return <>{t("masterclassPage", "badge")}</>;
 }
 
 export function MasterclassSubtitle() {
   const { t } = useI18n();
   return <>{t("masterclassPage", "subtitle")}</>;
-}
-
-export function MasterclassBadge() {
-  const { t } = useI18n();
-  return <>{t("masterclassPage", "badge")}</>;
 }
 
 export function ComingSoonTitle() {
@@ -45,11 +36,11 @@ export function TopicsList() {
   return (
     <>
       {topics.map((topic, i) => (
-        <div key={i}>
-          <span>{topic.icon}</span>
+        <div key={i} className={styles.topicCard}>
+          <span className={styles.topicIcon}>{topic.icon}</span>
           <div>
             <strong>{topic.title}</strong>
-            <span>{topic.desc}</span>
+            <span className={styles.topicDesc}>{topic.desc}</span>
           </div>
         </div>
       ))}

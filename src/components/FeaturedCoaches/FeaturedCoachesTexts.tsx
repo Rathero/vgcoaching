@@ -1,36 +1,26 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n";
+import styles from "./FeaturedCoaches.module.css";
 
 export function FeaturedCoachesHeader() {
   const { t } = useI18n();
   return (
     <>
-      <span style={{}}>{t("featuredCoaches", "label")}</span>
-      <h2>
+      <span className={styles.sectionLabel}>{t("featuredCoaches", "label")}</span>
+      <h2 className={styles.sectionTitle}>
         {t("featuredCoaches", "title1")}<span className="gradient-text">{t("featuredCoaches", "title2")}</span>
       </h2>
-      <p>
+      <p className={styles.sectionSubtitle}>
         {t("featuredCoaches", "subtitle")}
       </p>
     </>
   );
 }
 
-export function FeaturedCoachesTexts() {
-  const { t } = useI18n();
-  return {
-    sessions: t("featuredCoaches", "sessions"),
-    perSession: t("featuredCoaches", "perSession"),
-    checkPrice: t("featuredCoaches", "checkPrice"),
-    viewProfile: t("featuredCoaches", "viewProfile"),
-    viewAllCoaches: t("featuredCoaches", "viewAllCoaches"),
-  };
-}
-
 export function SessionsLabel({ count }: { count: number }) {
   const { t } = useI18n();
-  return <span>{count} {t("featuredCoaches", "sessions")}</span>;
+  return <>{count} {t("featuredCoaches", "sessions")}</>;
 }
 
 export function PriceLabel({ hasPrice, formattedPrice }: { hasPrice: boolean; formattedPrice?: string }) {
@@ -38,17 +28,17 @@ export function PriceLabel({ hasPrice, formattedPrice }: { hasPrice: boolean; fo
   if (hasPrice) {
     return (
       <>
-        <span>{formattedPrice}</span>
-        <span>{t("featuredCoaches", "perSession")}</span>
+        <span className={styles.price}>{formattedPrice}</span>
+        <span className={styles.priceLabel}>{t("featuredCoaches", "perSession")}</span>
       </>
     );
   }
-  return <span>{t("featuredCoaches", "checkPrice")}</span>;
+  return <span className={styles.priceLabel}>{t("featuredCoaches", "checkPrice")}</span>;
 }
 
 export function ViewProfileBtn() {
   const { t } = useI18n();
-  return <span>{t("featuredCoaches", "viewProfile")}</span>;
+  return <>{t("featuredCoaches", "viewProfile")}</>;
 }
 
 export function ViewAllCoachesLink() {
