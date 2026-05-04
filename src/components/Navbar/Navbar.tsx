@@ -140,7 +140,7 @@ export default function Navbar() {
                     {user.photoURL ? (
                       <img src={user.photoURL} alt="" width={28} height={28} style={{ borderRadius: "50%" }} />
                     ) : (
-                      user.displayName?.[0]?.toUpperCase() || "👤"
+                      user.displayName || "👤"
                     )}
                   </Link>
                 </div>

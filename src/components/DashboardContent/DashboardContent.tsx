@@ -15,7 +15,7 @@ interface EnrichedBooking extends Booking {
 }
 
 export default function DashboardContent() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, signOut } = useAuth();
   const router = useRouter();
   const [studentBookings, setStudentBookings] = useState<EnrichedBooking[]>([]);
   const [coachBookings, setCoachBookings] = useState<Booking[]>([]);
@@ -301,6 +301,9 @@ export default function DashboardContent() {
                 {profile.role === "coach" ? "👨‍🏫 Coach" : "🎓 Jugador"}
               </span>
             )}
+            <button className={styles.logoutBtn} onClick={signOut}>
+              Cerrar sesión
+            </button>
           </div>
         </div>
 
