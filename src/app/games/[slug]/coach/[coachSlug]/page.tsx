@@ -27,10 +27,14 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
         <div className={styles.container}>
           <Link href={`/games/${slug}`} className={styles.back}>← Volver a coaches</Link>
 
-          <div className={styles.layout}>
+          <div className={`${styles.layout} ${options.length === 0 ? styles.layoutSingle : ''}`}>
             <div>
               <div className={styles.profileHeader}>
-                <div className={styles.avatar}>{coach.avatar}</div>
+                {coach.avatar.startsWith('http') ? (
+                  <img src={coach.avatar} alt={coach.displayName} className={styles.avatar} referrerPolicy="no-referrer" />
+                ) : (
+                  <div className={styles.avatar}>{coach.avatar}</div>
+                )}
                 <div>
                   <div className={styles.nameRow}>
                     <h1 className={styles.name}>{coach.displayName}</h1>
@@ -41,10 +45,14 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                     <span className={styles.rankBig} style={{ background: `${rankColor}15`, color: rankColor, border: `1px solid ${rankColor}40` }}>
                       👑 {gameData.rank}
                     </span>
-                    <span className={styles.ratingBig}>⭐ {coach.ratingAvg}</span>
-                    <span className={styles.stat}><span className={styles.statValue}>{coach.totalSessions}</span> sesiones</span>
-                    <span className={styles.stat}><span className={styles.statValue}>{coach.totalStudents}</span> alumnos</span>
-                    <span className={styles.stat}><span className={styles.statValue}>{coach.eloUpRate}%</span> suben de elo</span>
+                    {reviews.length > 0 && <span className={styles.ratingBig}>⭐ {coach.ratingAvg}</span>}
+                    {(coach.totalSessions > 0 || coach.totalStudents > 0 || coach.eloUpRate > 0) && (
+                      <>
+                        {coach.totalSessions > 0 && <span className={styles.stat}><span className={styles.statValue}>{coach.totalSessions}</span> sesiones</span>}
+                        {coach.totalStudents > 0 && <span className={styles.stat}><span className={styles.statValue}>{coach.totalStudents}</span> alumnos</span>}
+                        {coach.eloUpRate > 0 && <span className={styles.stat}><span className={styles.statValue}>{coach.eloUpRate}%</span> suben de elo</span>}
+                      </>
+                    )}
                   </div>
                   <div className={styles.languages}>
                     {coach.languages.map(l => <span key={l} className={styles.langTag}>🗣️ {l}</span>)}
@@ -88,11 +96,11 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 </div>
               </div>
 
+              {reviews.length > 0 && (
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>💬 Opiniones ({reviews.length})</h2>
 
                 {/* Rating summary */}
-                {reviews.length > 0 && (
                   <div className={`glass-card ${styles.ratingSummary}`}>
                     <div className={styles.ratingBigNumber}>
                       <span className={styles.ratingValue}>{coach.ratingAvg}</span>
@@ -107,7 +115,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                     <div className={styles.ratingBars}>
                       {[5, 4, 3, 2, 1].map(star => {
                         const count = reviews.filter(r => r.rating === star).length;
-                        const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                        const pct = (count / reviews.length) * 100;
                         return (
                           <div key={star} className={styles.ratingBarRow}>
                             <span className={styles.ratingBarLabel}>{star}★</span>
@@ -120,7 +128,6 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                       })}
                     </div>
                   </div>
-                )}
 
                 {reviews.map(r => {
                   const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" }) : "";
@@ -147,17 +154,11 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                     </div>
                   );
                 })}
-
-                {reviews.length === 0 && (
-                  <div className={styles.noReviews}>
-                    <span>📝</span>
-                    <p>Aún no hay valoraciones. ¡Sé el primero!</p>
-                  </div>
-                )}
               </div>
+              )}
             </div>
 
-            <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} commissionRate={commissionRate} />
+            {options.length > 0 && <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} commissionRate={commissionRate} />}
           </div>
         </div>
       </div>

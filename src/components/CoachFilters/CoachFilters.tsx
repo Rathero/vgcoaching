@@ -114,7 +114,11 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
               return (
                 <Link key={coach.id} href={`/games/${gameSlug}/coach/${coach.slug}`} className={`glass-card ${styles.card}`}>
                   <div className={styles.cardTop}>
-                    <div className={styles.cardAvatar}>{coach.avatar}</div>
+                    {coach.avatar.startsWith('http') ? (
+                      <img src={coach.avatar} alt={coach.displayName} className={styles.cardAvatar} referrerPolicy="no-referrer" />
+                    ) : (
+                      <div className={styles.cardAvatar}>{coach.avatar}</div>
+                    )}
                     <div className={styles.cardInfo}>
                       <div className={styles.cardNameRow}>
                         <span className={styles.cardName}>{coach.displayName}</span>
@@ -125,8 +129,8 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
                         <span className={styles.rankBadge} style={{ background: `${rankColor}15`, color: rankColor, border: `1px solid ${rankColor}40` }}>
                           👑 {gameData.rank}
                         </span>
-                        <span className={styles.rating}>⭐ {coach.ratingAvg}</span>
-                        <span>{coach.totalSessions} sesiones</span>
+                        {coach.ratingAvg > 0 && <span className={styles.rating}>⭐ {coach.ratingAvg}</span>}
+                        {coach.totalSessions > 0 && <span>{coach.totalSessions} sesiones</span>}
                       </div>
                     </div>
                   </div>

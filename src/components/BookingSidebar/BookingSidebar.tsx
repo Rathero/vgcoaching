@@ -37,7 +37,6 @@ export default function BookingSidebar({ options, coachSlug, gameSlug, commissio
         <h3 className={styles.bookingTitle}>Reservar sesión</h3>
         <div className={styles.optionList}>
           {options.map(opt => {
-            const totalCents = Math.round(opt.priceCents * (1 + commissionRate));
             return (
               <div
                 key={opt.id}
@@ -57,7 +56,7 @@ export default function BookingSidebar({ options, coachSlug, gameSlug, commissio
                 <div className={styles.optionDesc}>{opt.description}</div>
                 <div className={styles.optionMeta}>
                   <span className={styles.optionDuration}>⏱ {opt.durationMinutes} min</span>
-                  <span className={styles.optionPrice}>{formatPrice(totalCents)}</span>
+                  <span className={styles.optionPrice}>{formatPrice(opt.priceCents)}</span>
                 </div>
               </div>
             );
