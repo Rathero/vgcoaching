@@ -12,7 +12,7 @@ export default function CTASection() {
               <span className="gradient-text">empieza aquí</span>
             </h2>
             <p className={styles.ctaSubtitle}>
-              Del rango Hierro al Diamante, cada nivel exige una nueva estrategia.
+              Del rango Hierro al Challenger, cada nivel exige una nueva estrategia.
               No dejes tu progresión al azar: domina el juego y marca la diferencia en cada partida.
             </p>
             <div className={styles.ctaActions}>

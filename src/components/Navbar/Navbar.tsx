@@ -68,7 +68,6 @@ export default function Navbar() {
     <nav className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.navContent}>
         <Link href="/" className={styles.logo}>
-          <div className={styles.logoIcon}>🎮</div>
           <div className={styles.logoText}>
             Dar<span>gog</span>
           </div>
@@ -137,17 +136,13 @@ export default function Navbar() {
             <>
               {user ? (
                 <div className={styles.userMenu}>
-                  <Link href="/dashboard" className={styles.userLink}>
-                    <span className={styles.userAvatar}>
-                      {user.photoURL ? (
-                        <img src={user.photoURL} alt="" width={28} height={28} style={{ borderRadius: "50%" }} />
-                      ) : (
-                        user.displayName?.[0]?.toUpperCase() || "👤"
-                      )}
-                    </span>
-                    <span className={styles.userName}>{user.displayName || "Mi perfil"}</span>
+                  <Link href="/dashboard" className={styles.userAvatar} title={user.displayName || "Mi perfil"}>
+                    {user.photoURL ? (
+                      <img src={user.photoURL} alt="" width={28} height={28} style={{ borderRadius: "50%" }} />
+                    ) : (
+                      user.displayName?.[0]?.toUpperCase() || "👤"
+                    )}
                   </Link>
-                  <button className="btn btn-ghost" onClick={signOut}>Salir</button>
                 </div>
               ) : (
                 <Link href="/login" className="btn btn-ghost">Iniciar sesión</Link>
