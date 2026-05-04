@@ -3,10 +3,18 @@ import styles from "./Hero.module.css";
 export default function Hero() {
   return (
     <section className={styles.hero} id="hero">
-      {/* Animated Background */}
-      <div className={styles.heroBg}>
-        <div className={styles.heroGrid}></div>
-      </div>
+      {/* Background Video */}
+      <video
+        className={styles.heroBgVideo}
+        autoPlay
+        muted
+        loop
+        playsInline
+        poster="/dargog_header.jpg"
+      >
+        <source src="/dargog_header.mp4" type="video/mp4" />
+      </video>
+      <div className={styles.heroBgOverlay} />
 
       {/* Floating Particles */}
       <div className={styles.particles}>
