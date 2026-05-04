@@ -470,3 +470,24 @@
   white-space: nowrap;
 }
 .connectBtn:hover { box-shadow: 0 0 16px var(--color-primary-glow); transform: translateY(-1px); }
+
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.logoutBtn:hover {
+  color: var(--color-error);
+  border-color: rgba(255, 77, 109, 0.4);
+  background: rgba(255, 77, 109, 0.08);
+}
