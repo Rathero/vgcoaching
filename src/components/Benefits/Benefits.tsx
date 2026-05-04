@@ -38,8 +38,10 @@ export default function Benefits() {
             <span className="gradient-text">con un pro a tu lado</span>
           </h2>
           <p className={styles.sectionSubtitle}>
-            Cada partida puede ser una lección o una frustración. Elige aprender
-            con alguien que ya pasó por donde tú estás.
+            Recibe un acompañamiento totalmente personalizado diseñado para tus
+            necesidades específicas, tus debilidades y tus metas. No es una guía
+            genérica; es un plan de entrenamiento hecho a medida para que subas
+            de nivel.
           </p>
         </div>
 

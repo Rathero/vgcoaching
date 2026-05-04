@@ -34,9 +34,9 @@ export default function Hero() {
         </div>
 
         <h1 className={styles.heroTitle}>
-          Deja de perder partidas.
+          Domina el juego.
           <br />
-          <span className={styles.heroTitleHighlight}>Empieza a dominar.</span>
+          <span className={styles.heroTitleHighlight}>Escala tu elo.</span>
         </h1>
 
         <p className={styles.heroSubtitle}>
