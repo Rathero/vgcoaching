@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useI18n } from "@/lib/i18n";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import styles from "./Navbar.module.css";
@@ -21,6 +22,7 @@ export default function Navbar() {
   const [gameMenuOpen, setGameMenuOpen] = useState(false);
   const [games, setGames] = useState<GameItem[]>([]);
   const { user, loading, signOut } = useAuth();
+  const { locale, setLocale, t } = useI18n();
   const pathname = usePathname();
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -83,7 +85,7 @@ export default function Navbar() {
               <span className={styles.gameSelectorIcon}>
                 {currentGame ? currentGame.icon : "🎮"}
               </span>
-              {currentGame ? currentGame.name : "Coaches"}
+              {currentGame ? currentGame.name : t("navbar", "coaches")}
               <span className={`${styles.gameSelectorArrow} ${gameMenuOpen ? styles.gameSelectorArrowOpen : ""}`}>▼</span>
             </button>
             {gameMenuOpen && (
@@ -103,7 +105,7 @@ export default function Navbar() {
                     <div key={game.id} className={`${styles.gameDropdownItem} ${styles.gameDropdownItemDisabled}`}>
                       <span className={styles.gameDropdownIcon}>{game.icon}</span>
                       <span>{game.name}</span>
-                      <span className={styles.gameDropdownBadge}>Pronto</span>
+                      <span className={styles.gameDropdownBadge}>{t("navbar", "soon")}</span>
                     </div>
                   )
                 ))}
@@ -114,20 +116,20 @@ export default function Navbar() {
                   onClick={() => setGameMenuOpen(false)}
                 >
                   <span className={styles.gameDropdownIcon}>📋</span>
-                  <span>Ver todos los juegos</span>
+                  <span>{t("navbar", "viewAllGames")}</span>
                 </Link>
               </div>
             )}
           </div>
 
           <Link href="/masterclass" className={styles.navLink}>
-            Masterclass
+            {t("navbar", "masterclass")}
           </Link>
           <a href="/#como-funciona" className={styles.navLink}>
-            Cómo funciona
+            {t("navbar", "howItWorks")}
           </a>
           <a href="/#testimonios" className={styles.navLink}>
-            Testimonios
+            {t("navbar", "testimonials")}
           </a>
         </div>
 
@@ -145,13 +147,30 @@ export default function Navbar() {
                   </Link>
                 </div>
               ) : (
-                <Link href="/login" className="btn btn-ghost">Iniciar sesión</Link>
+                <Link href="/login" className="btn btn-ghost">{t("navbar", "login")}</Link>
               )}
             </>
           )}
-          <Link href="/games" className="btn btn-primary">Encuentra tu coach</Link>
+          <Link href="/games" className="btn btn-primary">{t("navbar", "findYourCoach")}</Link>
 
-          <button className={styles.mobileMenuBtn} aria-label="Abrir menú">
+          {/* Language Selector */}
+          <div className={styles.langSelector}>
+            <button
+              className={`${styles.langBtn} ${locale === "es" ? styles.langBtnActive : ""}`}
+              onClick={() => setLocale("es")}
+            >
+              ES
+            </button>
+            <span className={styles.langDivider}>|</span>
+            <button
+              className={`${styles.langBtn} ${locale === "en" ? styles.langBtnActive : ""}`}
+              onClick={() => setLocale("en")}
+            >
+              EN
+            </button>
+          </div>
+
+          <button className={styles.mobileMenuBtn} aria-label={t("navbar", "openMenu")}>
             <span></span>
             <span></span>
             <span></span>

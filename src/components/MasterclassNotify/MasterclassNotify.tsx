@@ -1,11 +1,13 @@
 "use client";
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 import styles from "./MasterclassNotify.module.css";
 
 export default function MasterclassNotify() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { t } = useI18n();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +33,9 @@ export default function MasterclassNotify() {
     return (
       <div className={styles.successCard}>
         <span className={styles.successIcon}>✅</span>
-        <h3 className={styles.successTitle}>¡Te avisaremos!</h3>
+        <h3 className={styles.successTitle}>{t("masterclassNotify", "successTitle")}</h3>
         <p className={styles.successText}>
-          Cuando lancemos la primera masterclass, serás el primero en enterarte.
+          {t("masterclassNotify", "successText")}
         </p>
       </div>
     );
@@ -41,14 +43,14 @@ export default function MasterclassNotify() {
 
   return (
     <div className={styles.notifyCard}>
-      <h3 className={styles.notifyTitle}>🔔 Avísame cuando haya una masterclass</h3>
+      <h3 className={styles.notifyTitle}>{t("masterclassNotify", "title")}</h3>
       <p className={styles.notifyText}>
-        Déjanos tu nombre y email y te avisaremos en cuanto tengamos la primera masterclass lista.
+        {t("masterclassNotify", "text")}
       </p>
       <form className={styles.notifyForm} onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Tu nombre"
+          placeholder={t("masterclassNotify", "namePlaceholder")}
           value={name}
           onChange={e => setName(e.target.value)}
           className={styles.notifyInput}
@@ -56,7 +58,7 @@ export default function MasterclassNotify() {
         />
         <input
           type="email"
-          placeholder="Tu email"
+          placeholder={t("masterclassNotify", "emailPlaceholder")}
           value={email}
           onChange={e => setEmail(e.target.value)}
           className={styles.notifyInput}
@@ -67,11 +69,11 @@ export default function MasterclassNotify() {
           className={styles.notifyBtn}
           disabled={status === "loading"}
         >
-          {status === "loading" ? "Enviando..." : "Avísame"}
+          {status === "loading" ? t("masterclassNotify", "submitting") : t("masterclassNotify", "submit")}
         </button>
       </form>
       {status === "error" && (
-        <p className={styles.notifyError}>Ha ocurrido un error. Inténtalo de nuevo.</p>
+        <p className={styles.notifyError}>{t("masterclassNotify", "error")}</p>
       )}
     </div>
   );

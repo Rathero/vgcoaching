@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import MasterclassNotify from "@/components/MasterclassNotify/MasterclassNotify";
 import { getMasterclasses } from "@/lib/firestore";
+import { MasterclassBadge, MasterclassSubtitle, ComingSoonTitle, ComingSoonText, TopicsList, SlotsText, BookSlotBtn } from "./MasterclassTexts";
 import styles from "./page.module.css";
 
 export const metadata = {
@@ -24,13 +25,12 @@ export default async function MasterclassPage() {
       <div className={styles.page}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <span className={styles.badge}>🎓 Aprende de los mejores</span>
+            <span className={styles.badge}><MasterclassBadge /></span>
             <h1 className={styles.title}>
               Master<span className={styles.gradient}>classes</span>
             </h1>
             <p className={styles.subtitle}>
-              Sesiones en vivo con coaches profesionales sobre temas específicos del juego. 
-              Aprende wave management, jungle pathing, macro de equipo y mucho más.
+              <MasterclassSubtitle />
             </p>
           </div>
 
@@ -65,9 +65,9 @@ export default async function MasterclassPage() {
                     </div>
                     <div className={styles.cardFooter}>
                       <span className={styles.cardAttendees}>
-                        👥 {mc.currentAttendees}/{mc.maxAttendees} plazas
+                        <SlotsText current={mc.currentAttendees} max={mc.maxAttendees} />
                       </span>
-                      <button className={styles.cardBtn}>Reservar plaza</button>
+                      <button className={styles.cardBtn}><BookSlotBtn /></button>
                     </div>
                   </div>
                 </div>
@@ -81,28 +81,12 @@ export default async function MasterclassPage() {
                 <div className={styles.comingSoonIcon}>
                   <span>🎓</span>
                 </div>
-                <h2 className={styles.comingSoonTitle}>Próximamente</h2>
+                <h2 className={styles.comingSoonTitle}><ComingSoonTitle /></h2>
                 <p className={styles.comingSoonText}>
-                  Estamos preparando masterclasses increíbles con los mejores coaches de la plataforma. 
-                  Sesiones en vivo donde podrás aprender temas avanzados como:
+                  <ComingSoonText />
                 </p>
                 <div className={styles.topicGrid}>
-                  {[
-                    { icon: "🌊", title: "Wave Management Avanzado", desc: "Domina las olas como un pro" },
-                    { icon: "🗺️", title: "Macro de Equipo", desc: "Rotaciones y objetivos coordinados" },
-                    { icon: "🌲", title: "Jungle Pathing Óptimo", desc: "Rutas eficientes para cada situación" },
-                    { icon: "⚔️", title: "Trading en Lane", desc: "Gana todos los intercambios" },
-                    { icon: "👁️", title: "Control de Visión", desc: "Wardea como un profesional" },
-                    { icon: "🧠", title: "Mentalidad Competitiva", desc: "Gestiona el tilt y mejora tu foco" },
-                  ].map((topic, i) => (
-                    <div key={i} className={styles.topicCard}>
-                      <span className={styles.topicIcon}>{topic.icon}</span>
-                      <div>
-                        <strong>{topic.title}</strong>
-                        <span className={styles.topicDesc}>{topic.desc}</span>
-                      </div>
-                    </div>
-                  ))}
+                  <TopicsList />
                 </div>
                 <MasterclassNotify />
               </div>

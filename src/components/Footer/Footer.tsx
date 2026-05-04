@@ -1,6 +1,11 @@
+"use client";
+
+import { useI18n } from "@/lib/i18n";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
+  const { t } = useI18n();
+
   return (
     <footer className={styles.footer}>
       <div className={styles.container}>
@@ -14,9 +19,7 @@ export default function Footer() {
               </div>
             </div>
             <p className={styles.brandDescription}>
-              La plataforma de coaching gaming donde los mejores jugadores
-              profesionales te ayudan a alcanzar tu verdadero potencial
-              competitivo.
+              {t("footer", "brandDescription")}
             </p>
             <div className={styles.socials}>
               <a
@@ -49,45 +52,45 @@ export default function Footer() {
 
           {/* Juegos */}
           <div className={styles.column}>
-            <h4>Juegos</h4>
+            <h4>{t("footer", "games")}</h4>
             <ul>
               <li>
                 <a href="/games/league-of-legends">League of Legends</a>
               </li>
               <li>
-                <a href="/games/valorant">Valorant (pronto)</a>
+                <a href="/games/valorant">{t("footer", "valorantSoon")}</a>
               </li>
               <li>
-                <a href="/games/teamfight-tactics">TFT (pronto)</a>
+                <a href="/games/teamfight-tactics">{t("footer", "tftSoon")}</a>
               </li>
               <li>
-                <a href="/games">Ver todos</a>
+                <a href="/games">{t("footer", "viewAll")}</a>
               </li>
             </ul>
           </div>
 
           {/* Plataforma */}
           <div className={styles.column}>
-            <h4>Plataforma</h4>
+            <h4>{t("footer", "platform")}</h4>
             <ul>
               <li>
-                <a href="/#como-funciona">Cómo funciona</a>
+                <a href="/#como-funciona">{t("footer", "howItWorks")}</a>
               </li>
               <li>
-                <a href="/games">Coaches</a>
+                <a href="/games">{t("footer", "coaches")}</a>
               </li>
               <li>
-                <a href="/become-coach">Hazte coach</a>
+                <a href="/become-coach">{t("footer", "becomeCoach")}</a>
               </li>
               <li>
-                <a href="/masterclass">Masterclass</a>
+                <a href="/masterclass">{t("footer", "masterclass")}</a>
               </li>
             </ul>
           </div>
 
           {/* Contacto */}
           <div className={styles.column}>
-            <h4>Contacto</h4>
+            <h4>{t("footer", "contact")}</h4>
             <ul>
               <li>
                 <a href="mailto:info.dargog@gmail.com">info.dargog@gmail.com</a>
@@ -104,11 +107,11 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className={styles.bottom}>
-          <p>© {new Date().getFullYear()} Dargog. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} Dargog. {t("footer", "allRights")}</p>
           <div className={styles.bottomLinks}>
-            <a href="#">Términos de servicio</a>
-            <a href="#">Política de privacidad</a>
-            <a href="#">Cookies</a>
+            <a href="#">{t("footer", "terms")}</a>
+            <a href="#">{t("footer", "privacy")}</a>
+            <a href="#">{t("footer", "cookies")}</a>
           </div>
         </div>
       </div>

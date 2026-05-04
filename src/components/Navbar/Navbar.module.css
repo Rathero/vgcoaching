@@ -262,6 +262,41 @@
 .userLink:hover { color: var(--color-primary-light); }
 .userName { white-space: nowrap; }
 
+.langSelector {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+}
+
+.langBtn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  font-family: var(--font-body);
+  letter-spacing: 0.04em;
+}
+
+.langBtn:hover {
+  color: var(--color-text);
+}
+
+.langBtnActive {
+  color: var(--color-primary-light);
+}
+
+.langDivider {
+  color: var(--color-border);
+  font-size: 0.7rem;
+  user-select: none;
+}
+
 .mobileMenuBtn {
   display: none;
   flex-direction: column;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFeaturedCoaches } from "@/lib/firestore";
 import { formatPrice, rankColors } from "@/lib/utils";
+import { FeaturedCoachesHeader, SessionsLabel, PriceLabel, ViewProfileBtn, ViewAllCoachesLink } from "./FeaturedCoachesTexts";
 import styles from "./FeaturedCoaches.module.css";
 
 export default async function FeaturedCoaches() {
@@ -19,14 +20,7 @@ export default async function FeaturedCoaches() {
     <section className={styles.section} id="coaches">
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.sectionLabel}>Coaches destacados</span>
-          <h2 className={styles.sectionTitle}>
-            Los mejores, <span className="gradient-text">a tu alcance</span>
-          </h2>
-          <p className={styles.sectionSubtitle}>
-            Jugadores verificados y listos para ayudarte a
-            alcanzar tu verdadero potencial.
-          </p>
+          <FeaturedCoachesHeader />
         </div>
 
         <div className={styles.grid}>
@@ -79,7 +73,7 @@ export default async function FeaturedCoaches() {
                     )}
                     {coach.totalSessions > 0 && (
                       <span className={styles.sessions}>
-                        {coach.totalSessions} sesiones
+                        <SessionsLabel count={coach.totalSessions} />
                       </span>
                     )}
                   </div>
@@ -106,16 +100,9 @@ export default async function FeaturedCoaches() {
 
                   <div className={styles.cardFooter}>
                     <div>
-                      {minPrice > 0 ? (
-                        <>
-                          <span className={styles.price}>{formatPrice(minPrice)}</span>
-                          <span className={styles.priceLabel}> /sesión</span>
-                        </>
-                      ) : (
-                        <span className={styles.priceLabel}>Consultar precio</span>
-                      )}
+                      <PriceLabel hasPrice={minPrice > 0} formattedPrice={minPrice > 0 ? formatPrice(minPrice) : undefined} />
                     </div>
-                    <span className={styles.cardBtn}>Ver perfil</span>
+                    <span className={styles.cardBtn}><ViewProfileBtn /></span>
                   </div>
                 </div>
               </Link>
@@ -124,9 +111,7 @@ export default async function FeaturedCoaches() {
         </div>
 
         <div className={styles.ctaRow}>
-          <a href="/games" className="btn btn-secondary">
-            Ver todos los coaches →
-          </a>
+          <ViewAllCoachesLink />
         </div>
       </div>
     </section>

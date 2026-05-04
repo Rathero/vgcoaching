@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
+import { useI18n } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar/Navbar";
@@ -8,6 +9,7 @@ import styles from "../login/page.module.css";
 
 export default function ForgotPasswordPage() {
   const { user, loading, resetPassword } = useAuth();
+  const { t } = useI18n();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
@@ -35,16 +37,16 @@ export default function ForgotPasswordPage() {
       const code = (err as { code?: string }).code;
       switch (code) {
         case "auth/user-not-found":
-          setError("No existe una cuenta con este email.");
+          setError(t("forgotPassword", "errNotFound"));
           break;
         case "auth/invalid-email":
-          setError("Email no válido.");
+          setError(t("forgotPassword", "errInvalidEmail"));
           break;
         case "auth/too-many-requests":
-          setError("Demasiados intentos. Espera unos minutos.");
+          setError(t("forgotPassword", "errTooMany"));
           break;
         default:
-          setError("Error al enviar el email. Inténtalo de nuevo.");
+          setError(t("forgotPassword", "errDefault"));
       }
     } finally {
       setSubmitting(false);
@@ -57,16 +59,16 @@ export default function ForgotPasswordPage() {
       <div className={styles.page}>
         <div className={`glass-card ${styles.card}`}>
           <div className={styles.icon}>🔑</div>
-          <h1 className={styles.title}>Recuperar contraseña</h1>
+          <h1 className={styles.title}>{t("forgotPassword", "title")}</h1>
           <p className={styles.subtitle}>
-            Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.
+            {t("forgotPassword", "subtitle")}
           </p>
 
           <form className={styles.form} onSubmit={handleReset}>
             {error && <div className={styles.error}>{error}</div>}
             {success && (
               <div className={styles.success}>
-                ✅ Email enviado. Revisa tu bandeja de entrada (y la carpeta de spam) para restablecer tu contraseña.
+                {t("forgotPassword", "success")}
               </div>
             )}
 
@@ -74,7 +76,7 @@ export default function ForgotPasswordPage() {
               <>
                 <input
                   type="email"
-                  placeholder="Email de tu cuenta"
+                  placeholder={t("forgotPassword", "emailPlaceholder")}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   className={styles.input}
@@ -83,14 +85,14 @@ export default function ForgotPasswordPage() {
                 />
 
                 <button type="submit" className={styles.emailBtn} disabled={submitting}>
-                  {submitting ? "Enviando..." : "Enviar enlace de recuperación"}
+                  {submitting ? t("forgotPassword", "submitting") : t("forgotPassword", "submit")}
                 </button>
               </>
             )}
           </form>
 
           <div className={styles.links}>
-            <Link href="/login" className={styles.link}>← Volver a iniciar sesión</Link>
+            <Link href="/login" className={styles.link}>{t("forgotPassword", "back")}</Link>
           </div>
         </div>
       </div>

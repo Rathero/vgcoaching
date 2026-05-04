@@ -1,6 +1,11 @@
+"use client";
+
+import { useI18n } from "@/lib/i18n";
 import styles from "./Hero.module.css";
 
 export default function Hero() {
+  const { t } = useI18n();
+
   return (
     <section className={styles.hero} id="hero">
       {/* Animated Background */}
@@ -22,23 +27,22 @@ export default function Hero() {
       <div className={styles.heroContent}>
         <div className={styles.heroBadge}>
           <span className={styles.heroBadgeDot}></span>
-          Nuevo: Coaching de League of Legends disponible
+          {t("hero", "badge")}
         </div>
 
         <h1 className={styles.heroTitle}>
-          Domina el juego.
+          {t("hero", "title1")}
           <br />
-          <span className={styles.heroTitleHighlight}>Escala tu elo.</span>
+          <span className={styles.heroTitleHighlight}>{t("hero", "title2")}</span>
         </h1>
 
         <p className={styles.heroSubtitle}>
-          Entrena 1 a 1 con jugadores profesionales y ex-competidores.
-          Coaching personalizado para subir de elo de verdad, no promesas vacías.
+          {t("hero", "subtitle")}
         </p>
 
         <div className={styles.heroActions}>
           <a href="/games" className="btn btn-primary">
-            Encuentra tu coach
+            {t("hero", "cta")}
             <span>→</span>
           </a>
         </div>

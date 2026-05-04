@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 import styles from "./CoachRequestCTA.module.css";
 
 const roleOptions = [
@@ -21,6 +22,7 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
   const [roles, setRoles] = useState<string[]>([]);
   const [specifications, setSpecifications] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { t } = useI18n();
 
   const toggleRole = (id: string) =>
     setRoles(prev => prev.includes(id) ? prev.filter(r => r !== id) : [...prev, id]);
@@ -55,10 +57,9 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
       <div className={styles.wrapper}>
         <div className={styles.successCard}>
           <span className={styles.successIcon}>🎉</span>
-          <h3 className={styles.successTitle}>¡Solicitud enviada!</h3>
+          <h3 className={styles.successTitle}>{t("coachRequestCTA", "successTitle")}</h3>
           <p className={styles.successText}>
-            Te avisaremos en cuanto incorporemos nuevos coaches que encajen con lo que buscas.
-            ¡Sé el primero en elegir!
+            {t("coachRequestCTA", "successText")}
           </p>
         </div>
       </div>
@@ -69,14 +70,13 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
     <div className={styles.wrapper}>
       <div className={styles.ctaCard}>
         <div className={styles.ctaContent}>
-          <h3 className={styles.ctaTitle}>¿Buscas algo más?</h3>
+          <h3 className={styles.ctaTitle}>{t("coachRequestCTA", "title")}</h3>
           <p className={styles.ctaText}>
-            Apúntate a nuestra lista de novedades y te avisaremos en cuanto incorporemos
-            nuevos coaches. ¡Sé el primero en elegir!
+            {t("coachRequestCTA", "text")}
           </p>
           {!open && (
             <button className={styles.ctaBtn} onClick={() => setOpen(true)}>
-              Quiero que me aviséis
+              {t("coachRequestCTA", "button")}
             </button>
           )}
         </div>
@@ -86,7 +86,7 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
             <div className={styles.formRow}>
               <input
                 type="text"
-                placeholder="Tu nombre"
+                placeholder={t("coachRequestCTA", "namePlaceholder")}
                 value={name}
                 onChange={e => setName(e.target.value)}
                 className={styles.input}
@@ -94,7 +94,7 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
               />
               <input
                 type="email"
-                placeholder="Tu email"
+                placeholder={t("coachRequestCTA", "emailPlaceholder")}
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 className={styles.input}
@@ -103,7 +103,7 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>¿Qué tipo de coach buscas?</label>
+              <label className={styles.formLabel}>{t("coachRequestCTA", "roleLabel")}</label>
               <div className={styles.roleGrid}>
                 {roleOptions.map(role => (
                   <button
@@ -119,9 +119,9 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>Especificaciones (opcional)</label>
+              <label className={styles.formLabel}>{t("coachRequestCTA", "specLabel")}</label>
               <textarea
-                placeholder="¿Hay algo específico que busques? Rango, idioma, horarios..."
+                placeholder={t("coachRequestCTA", "specPlaceholder")}
                 value={specifications}
                 onChange={e => setSpecifications(e.target.value)}
                 className={styles.textarea}
@@ -134,11 +134,11 @@ export default function CoachRequestCTA({ gameSlug }: Props) {
               className={styles.submitBtn}
               disabled={status === "loading"}
             >
-              {status === "loading" ? "Enviando..." : "Enviar solicitud"}
+              {status === "loading" ? t("coachRequestCTA", "submitting") : t("coachRequestCTA", "submit")}
             </button>
 
             {status === "error" && (
-              <p className={styles.formError}>Ha ocurrido un error. Inténtalo de nuevo.</p>
+              <p className={styles.formError}>{t("coachRequestCTA", "error")}</p>
             )}
           </form>
         )}

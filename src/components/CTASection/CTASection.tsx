@@ -1,6 +1,11 @@
+"use client";
+
+import { useI18n } from "@/lib/i18n";
 import styles from "./CTASection.module.css";
 
 export default function CTASection() {
+  const { t } = useI18n();
+
   return (
     <section className={styles.section}>
       <div className={styles.container}>
@@ -8,20 +13,19 @@ export default function CTASection() {
           <div className={styles.ctaBg}></div>
           <div className={styles.ctaContent}>
             <h2 className={styles.ctaTitle}>
-              Tu siguiente victoria{" "}
-              <span className="gradient-text">empieza aquí</span>
+              {t("cta", "title1")}
+              <span className="gradient-text">{t("cta", "title2")}</span>
             </h2>
             <p className={styles.ctaSubtitle}>
-              Del rango Hierro al Challenger, cada nivel exige una nueva estrategia.
-              No dejes tu progresión al azar: domina el juego y marca la diferencia en cada partida.
+              {t("cta", "subtitle")}
             </p>
             <div className={styles.ctaActions}>
               <a href="/games" className="btn btn-primary">
-                Encuentra tu coach →
+                {t("cta", "button")}
               </a>
             </div>
             <p className={styles.ctaNote}>
-              Sin suscripciones · Paga solo por sesión · Cancela cuando quieras
+              {t("cta", "note")}
             </p>
           </div>
         </div>

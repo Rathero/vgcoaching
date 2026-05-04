@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Coach, CoachGame } from "@/lib/types";
 import { rankColors, formatPrice } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 import styles from "./CoachFilters.module.css";
 
 const ranks = ["Challenger", "Grandmaster", "Master", "Diamond"];
@@ -25,6 +26,7 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
   const [selectedRanks, setSelectedRanks] = useState<string[]>([]);
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("rating");
+  const { t } = useI18n();
 
   const allSpecialties = useMemo(() => {
     const set = new Set<string>();
@@ -55,7 +57,7 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
     <div className={styles.layout}>
       <aside className={styles.sidebar}>
         <div className={styles.filterGroup}>
-          <div className={styles.filterLabel}>Línea / Rol</div>
+          <div className={styles.filterLabel}>{t("coachFilters", "lineRole")}</div>
           <div className={styles.filterOptions}>
             {allRoles.map(r => (
               <button key={r.id} className={`${styles.filterBtn} ${selectedRoles.includes(r.id) ? styles.filterBtnActive : ""}`} onClick={() => toggleFilter(selectedRoles, r.id, setSelectedRoles)}>
@@ -65,7 +67,7 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
           </div>
         </div>
         <div className={styles.filterGroup}>
-          <div className={styles.filterLabel}>Rango</div>
+          <div className={styles.filterLabel}>{t("coachFilters", "rank")}</div>
           <div className={styles.filterOptions}>
             {ranks.map(r => (
               <button key={r} className={`${styles.filterBtn} ${selectedRanks.includes(r) ? styles.filterBtnActive : ""}`} onClick={() => toggleFilter(selectedRanks, r, setSelectedRanks)}>
@@ -75,7 +77,7 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
           </div>
         </div>
         <div className={styles.filterGroup}>
-          <div className={styles.filterLabel}>Especialidad</div>
+          <div className={styles.filterLabel}>{t("coachFilters", "specialty")}</div>
           <div className={styles.filterOptions}>
             {allSpecialties.map(s => (
               <button key={s} className={`${styles.filterBtn} ${selectedSpecialties.includes(s) ? styles.filterBtnActive : ""}`} onClick={() => toggleFilter(selectedSpecialties, s, setSelectedSpecialties)}>
@@ -86,26 +88,28 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
         </div>
         {(selectedRoles.length > 0 || selectedRanks.length > 0 || selectedSpecialties.length > 0) && (
           <button className={styles.clearBtn} onClick={() => { setSelectedRoles([]); setSelectedRanks([]); setSelectedSpecialties([]); }}>
-            Limpiar filtros
+            {t("coachFilters", "clearFilters")}
           </button>
         )}
       </aside>
 
       <div>
         <div className={styles.sortBar}>
-          <span className={styles.resultCount}>{filtered.length} coach{filtered.length !== 1 ? "es" : ""} encontrado{filtered.length !== 1 ? "s" : ""}</span>
+          <span className={styles.resultCount}>
+            {filtered.length} {filtered.length !== 1 ? t("coachFilters", "coachesFound") : t("coachFilters", "coachFound")}
+          </span>
           <select className={styles.sortSelect} value={sortBy} onChange={e => setSortBy(e.target.value)}>
-            <option value="rating">Mejor valorados</option>
-            <option value="sessions">Más sesiones</option>
-            <option value="price_asc">Precio: menor a mayor</option>
-            <option value="price_desc">Precio: mayor a menor</option>
+            <option value="rating">{t("coachFilters", "bestRated")}</option>
+            <option value="sessions">{t("coachFilters", "mostSessions")}</option>
+            <option value="price_asc">{t("coachFilters", "priceLowHigh")}</option>
+            <option value="price_desc">{t("coachFilters", "priceHighLow")}</option>
           </select>
         </div>
 
         {filtered.length === 0 ? (
           <div className={styles.noResults}>
             <p style={{ fontSize: "2rem", marginBottom: "8px" }}>🔍</p>
-            <p>No hay coaches con esos filtros. Prueba con otros criterios.</p>
+            <p>{t("coachFilters", "noResults")}</p>
           </div>
         ) : (
           <div className={styles.coachGrid}>
@@ -130,7 +134,7 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
                           👑 {gameData.rank}
                         </span>
                         {coach.ratingAvg > 0 && <span className={styles.rating}>⭐ {coach.ratingAvg}</span>}
-                        {coach.totalSessions > 0 && <span>{coach.totalSessions} sesiones</span>}
+                        {coach.totalSessions > 0 && <span>{coach.totalSessions} {t("coachFilters", "sessions")}</span>}
                       </div>
                     </div>
                   </div>
@@ -141,8 +145,8 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
                       {gameData.specialties.slice(0, 3).map(s => <span key={s} className={styles.tag}>{s}</span>)}
                     </div>
                     <div className={styles.cardFooter}>
-                      <div><span className={styles.price}>{formatPrice(minPrice)}</span><span className={styles.priceLabel}> desde</span></div>
-                      <span className={styles.cardBtn}>Ver perfil</span>
+                      <div><span className={styles.price}>{formatPrice(minPrice)}</span><span className={styles.priceLabel}>{t("coachFilters", "from")}</span></div>
+                      <span className={styles.cardBtn}>{t("coachFilters", "viewProfile")}</span>
                     </div>
                   </div>
                 </Link>
