@@ -93,6 +93,19 @@
   font-size: 1.8rem;
 }
 
+.cardAvatarImg {
+  position: absolute;
+  bottom: -28px;
+  left: var(--space-lg);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px solid var(--color-bg-elevated);
+  overflow: hidden;
+  z-index: 2;
+  object-fit: cover;
+}
+
 .onlineBadge {
   position: absolute;
   bottom: -24px;

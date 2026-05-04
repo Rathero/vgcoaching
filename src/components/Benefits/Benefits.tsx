@@ -5,25 +5,25 @@ const benefits = [
     icon: "🎯",
     iconClass: "cardIconPrimary",
     glowClass: "glowPrimary",
-    title: "Aprende lo que YouTube no te enseña",
+    title: "Aprende con los mejores",
     description:
-      "Feedback personalizado en tiempo real sobre TUS partidas, TUS errores y TUS hábitos. No guías genéricas — coaching hecho a medida para ti.",
+      "Conecta con coaches verificados, expertos en tu rol, que te guiarán con métodos probados para elevar tu nivel de juego. Tu camino al éxito, respaldado por profesionales.",
   },
   {
     icon: "📈",
     iconClass: "cardIconSecondary",
     glowClass: "glowSecondary",
-    title: "Resultados desde la primera sesión",
+    title: "Formatos flexibles",
     description:
-      "Nuestros alumnos suben una media de 2 divisiones en el primer mes. Porque no se trata de jugar más, sino de jugar mejor.",
+      "Elige cómo quieres aprender: sesiones individuales para un enfoque total, o entrenamientos en dúo y equipo para mejorar la coordinación y sinergia con tus compañeros. Se adapta a tu forma de jugar.",
   },
   {
     icon: "🏆",
     iconClass: "cardIconAccent",
     glowClass: "glowAccent",
-    title: "Coaches que han competido al más alto nivel",
+    title: "Elige con seguridad",
     description:
-      "Ex-profesionales de LEC, LCS y competiciones internacionales. No solo saben jugar — saben enseñar.",
+      "Filtra por rango, especialidad y precio para encontrar al coach que encaje contigo sin sorpresas. Elige basándote en valoraciones reales y un sistema de reputación totalmente transparente.",
   },
 ];
 

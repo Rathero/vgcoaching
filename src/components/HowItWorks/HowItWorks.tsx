@@ -4,14 +4,14 @@ const steps = [
   {
     number: "01",
     icon: "🎮",
-    title: "Elige tu juego",
-    description: "Empieza con League of Legends. Pronto más títulos.",
+    title: "Elige tu videojuego",
+    description: "Empieza con League of Legends. Pronto más videojuegos.",
   },
   {
     number: "02",
     icon: "🔍",
     title: "Encuentra tu coach",
-    description: "Filtra por rango, línea, idioma y especialidad.",
+    description: "Aplica diferentes filtros y encuentra el coach que más se adapta a ti.",
   },
   {
     number: "03",
@@ -22,8 +22,8 @@ const steps = [
   {
     number: "04",
     icon: "🚀",
-    title: "Juega, aprende, sube",
-    description: "Coaching en vivo, VOD review o lo que necesites.",
+    title: "Mejora tu rendimiento",
+    description: "Sesiones de coaching adaptadas a tus metas, desde análisis de partidas hasta entrenamiento avanzado en tiempo real.",
   },
 ];
 
@@ -39,7 +39,7 @@ export default function HowItWorks() {
           </h2>
           <p className={styles.sectionSubtitle}>
             Sin complicaciones. Encuentra al coach perfecto, reserva cuando
-            te venga bien, y empieza a mejorar.
+            te venga bien, y empieza a subir de nivel.
           </p>
         </div>
 

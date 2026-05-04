@@ -70,7 +70,7 @@ export default function Navbar() {
         <Link href="/" className={styles.logo}>
           <div className={styles.logoIcon}>🎮</div>
           <div className={styles.logoText}>
-            Games<span>Coaching</span>
+            Dar<span>gog</span>
           </div>
         </Link>
 
@@ -84,7 +84,7 @@ export default function Navbar() {
               <span className={styles.gameSelectorIcon}>
                 {currentGame ? currentGame.icon : "🎮"}
               </span>
-              {currentGame ? currentGame.name : "Juegos"}
+              {currentGame ? currentGame.name : "Coaches"}
               <span className={`${styles.gameSelectorArrow} ${gameMenuOpen ? styles.gameSelectorArrowOpen : ""}`}>▼</span>
             </button>
             {gameMenuOpen && (

@@ -41,26 +41,6 @@ export default function Hero() {
             Encuentra tu coach
             <span>→</span>
           </a>
-          <a href="#como-funciona" className="btn btn-secondary">
-            Cómo funciona
-          </a>
-        </div>
-
-        <div className={styles.heroStats}>
-          <div className={styles.heroStat}>
-            <div className={styles.heroStatValue}>+2.500</div>
-            <div className={styles.heroStatLabel}>Sesiones completadas</div>
-          </div>
-          <div className={styles.heroStatDivider}></div>
-          <div className={styles.heroStat}>
-            <div className={styles.heroStatValue}>4.9 ⭐</div>
-            <div className={styles.heroStatLabel}>Valoración media</div>
-          </div>
-          <div className={styles.heroStatDivider}></div>
-          <div className={styles.heroStat}>
-            <div className={styles.heroStatValue}>87%</div>
-            <div className={styles.heroStatLabel}>Suben de división</div>
-          </div>
         </div>
       </div>
     </section>

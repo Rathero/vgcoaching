@@ -10,7 +10,7 @@ const testimonials = [
     rankTo: "Platino I",
   },
   {
-    text: "Llevaba 2 años estancado en Plata. En 5 sesiones de jungle pathing con JungleKing77 subí a Oro III. Lo mejor es que ahora entiendo POR QUÉ hago lo que hago.",
+    text: "Llevaba 2 años estancado en Plata. En 5 sesiones de jungle pathing subí a Oro III. Lo mejor es que ahora entiendo POR QUÉ hago lo que hago.",
     name: "Lucía R.",
     avatar: "👩‍🎮",
     meta: "Jungle main · 5 sesiones",
@@ -32,7 +32,7 @@ export default function Testimonials() {
     <section className={styles.section} id="testimonios">
       <div className={styles.container}>
         <div className={styles.header}>
-          <span className={styles.sectionLabel}>Testimonios reales</span>
+          <span className={styles.sectionLabel}>Testimonios</span>
           <h2 className={styles.sectionTitle}>
             No lo decimos nosotros,{" "}
             <span className="gradient-text">lo dicen ellos</span>

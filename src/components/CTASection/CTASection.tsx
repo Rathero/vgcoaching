@@ -12,15 +12,12 @@ export default function CTASection() {
               <span className="gradient-text">empieza aquí</span>
             </h2>
             <p className={styles.ctaSubtitle}>
-              No importa si estás en Hierro o en Diamante. Siempre hay un
-              siguiente nivel. Déjanos ayudarte a llegar.
+              Del rango Hierro al Diamante, cada nivel exige una nueva estrategia.
+              No dejes tu progresión al azar: domina el juego y marca la diferencia en cada partida.
             </p>
             <div className={styles.ctaActions}>
               <a href="/games" className="btn btn-primary">
                 Encuentra tu coach →
-              </a>
-              <a href="#como-funciona" className="btn btn-secondary">
-                Saber más
               </a>
             </div>
             <p className={styles.ctaNote}>

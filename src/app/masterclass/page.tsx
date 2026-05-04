@@ -1,10 +1,11 @@
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
+import MasterclassNotify from "@/components/MasterclassNotify/MasterclassNotify";
 import { getMasterclasses } from "@/lib/firestore";
 import styles from "./page.module.css";
 
 export const metadata = {
-  title: "Masterclasses — GamesCoaching",
+  title: "Masterclasses — Dargog",
   description: "Aprende de los mejores pros en sesiones en vivo sobre temas específicos de League of Legends.",
 };
 
@@ -45,9 +46,6 @@ export default async function MasterclassPage() {
                         <span>🎓</span>
                       </div>
                     )}
-                    <span className={styles.cardBadge}>
-                      {(mc.priceCents / 100).toFixed(0)}€
-                    </span>
                   </div>
                   <div className={styles.cardBody}>
                     <div className={styles.cardTags}>
@@ -106,10 +104,7 @@ export default async function MasterclassPage() {
                     </div>
                   ))}
                 </div>
-                <div className={styles.comingSoonPricing}>
-                  <span className={styles.priceBadge}>20€ / masterclass</span>
-                  <span className={styles.priceNote}>Plazas limitadas · Sesiones en vivo con chat interactivo</span>
-                </div>
+                <MasterclassNotify />
               </div>
             </div>
           )}

@@ -10,7 +10,7 @@ export default function Footer() {
             <div className={styles.logo}>
               <div className={styles.logoIcon}>🎮</div>
               <div className={styles.logoText}>
-                Games<span>Coaching</span>
+                Dar<span>gog</span>
               </div>
             </div>
             <p className={styles.brandDescription}>
@@ -104,7 +104,7 @@ export default function Footer() {
 
         {/* Bottom */}
         <div className={styles.bottom}>
-          <p>© {new Date().getFullYear()} GamesCoaching. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} Dargog. Todos los derechos reservados.</p>
           <div className={styles.bottomLinks}>
             <a href="#">Términos de servicio</a>
             <a href="#">Política de privacidad</a>

@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import DashboardContent from "@/components/DashboardContent/DashboardContent";
 
 export const metadata = {
-  title: "Mi Panel — GamesCoaching",
+  title: "Mi Panel — Dargog",
   description: "Gestiona tus sesiones de coaching, accede a tus videollamadas y revisa tu historial.",
 };
 

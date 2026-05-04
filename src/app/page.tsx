@@ -5,6 +5,7 @@ import HowItWorks from "@/components/HowItWorks/HowItWorks";
 import FeaturedCoaches from "@/components/FeaturedCoaches/FeaturedCoaches";
 import Testimonials from "@/components/Testimonials/Testimonials";
 import CTASection from "@/components/CTASection/CTASection";
+import FAQ from "@/components/FAQ/FAQ";
 import Footer from "@/components/Footer/Footer";
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
         <HowItWorks />
         <FeaturedCoaches />
         <Testimonials />
+        <FAQ />
         <CTASection />
       </main>
       <Footer />

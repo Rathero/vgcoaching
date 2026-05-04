@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import CoachFilters from "@/components/CoachFilters/CoachFilters";
+import CoachRequestCTA from "@/components/CoachRequestCTA/CoachRequestCTA";
 import { getGame, getCoachesByGame, getCoachOptions, getMinPrice } from "@/lib/firestore";
 
 export default async function GamePage(props: PageProps<"/games/[slug]">) {
@@ -62,6 +63,7 @@ export default async function GamePage(props: PageProps<"/games/[slug]">) {
             </p>
           </div>
           <CoachFilters coaches={coaches} gameSlug={slug} />
+          <CoachRequestCTA gameSlug={slug} />
         </div>
       </div>
       <Footer />

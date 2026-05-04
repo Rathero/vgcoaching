@@ -1,5 +1,6 @@
 import { adminDb } from "./firebase-admin";
 import type { Game, Coach, CoachGame, CoachingOption, Review, Availability, Booking, UserProfile, SessionMaterial, CoachApplication, Masterclass, MasterclassRegistration } from "./types";
+import { getMinPrice } from "./utils";
 
 // ─── Games ───────────────────────────────────────────────
 export async function getGames(): Promise<Game[]> {
@@ -50,6 +51,27 @@ export async function getCoachesByGame(gameId: string): Promise<{ coach: Coach; 
         results.push({ coach, gameData });
       }
     }
+  }
+  return results;
+}
+
+/** Get featured coaches: verified + listed, for the landing page. Returns coach + first gameData + minPrice. */
+export async function getFeaturedCoaches(): Promise<{ coach: Coach; gameData: CoachGame | null; minPrice: number }[]> {
+  const snap = await adminDb.collection("coaches")
+    .where("verified", "==", true)
+    .where("listed", "!=", false)
+    .get();
+
+  const results: { coach: Coach; gameData: CoachGame | null; minPrice: number }[] = [];
+  for (const doc of snap.docs) {
+    const coach = { id: doc.id, ...doc.data() } as Coach;
+    // Get first game data
+    const cgSnap = await adminDb.collection("coachGames").where("coachId", "==", coach.id).limit(1).get();
+    const gameData = cgSnap.empty ? null : (cgSnap.docs[0].data() as CoachGame);
+    // Get min price
+    const options = await getCoachOptions(coach.id);
+    const minPrice = getMinPrice(options);
+    results.push({ coach, gameData, minPrice });
   }
   return results;
 }

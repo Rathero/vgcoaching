@@ -1,0 +1,111 @@
+.notifyCard {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-2xl);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(124, 92, 252, 0.25);
+  text-align: center;
+}
+
+.notifyTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.notifyText {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--space-xl);
+}
+
+.notifyForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.notifyInput {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  transition: border-color var(--transition-fast);
+}
+
+.notifyInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.1);
+}
+
+.notifyInput::placeholder {
+  color: var(--color-text-muted);
+}
+
+.notifyBtn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-heading);
+}
+
+.notifyBtn:hover {
+  box-shadow: 0 4px 20px var(--color-primary-glow);
+  transform: translateY(-1px);
+}
+
+.notifyBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.notifyError {
+  margin-top: var(--space-md);
+  font-size: 0.85rem;
+  color: var(--color-accent);
+}
+
+/* Success state */
+.successCard {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-2xl);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-card);
+  border: 1px solid rgba(0, 212, 200, 0.25);
+  text-align: center;
+}
+
+.successIcon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: var(--space-md);
+}
+
+.successTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+  color: var(--color-secondary);
+}
+
+.successText {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}

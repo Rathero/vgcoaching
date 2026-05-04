@@ -3,7 +3,7 @@ import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "GamesCoaching — Entrena con los mejores pros y sube de elo",
+  title: "Dargog — Entrena con los mejores pros y sube de elo",
   description:
     "Coaching personalizado 1 a 1 con jugadores profesionales de League of Legends y más. Sube de elo de verdad con sesiones de coaching en vivo, VOD review y más.",
   keywords: [
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     "coaching esports",
   ],
   openGraph: {
-    title: "GamesCoaching — Entrena con los mejores pros y sube de elo",
+    title: "Dargog — Entrena con los mejores pros y sube de elo",
     description:
       "Coaching personalizado 1 a 1 con jugadores profesionales. Sube de elo de verdad.",
     type: "website",
