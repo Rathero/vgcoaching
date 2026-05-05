@@ -170,6 +170,13 @@
   font-weight: 600;
 }
 
+.rankEmblem {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 3px currentColor);
+}
+
 .rankChallenger {
   background: rgba(244, 200, 116, 0.12);
   color: var(--color-challenger);

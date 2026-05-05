@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Coach, CoachGame } from "@/lib/types";
-import { rankColors, formatPrice } from "@/lib/utils";
+import { rankColors, rankImages, formatPrice } from "@/lib/utils";
 import { useI18n } from "@/lib/i18n";
 import styles from "./CoachFilters.module.css";
 
@@ -131,7 +131,10 @@ export default function CoachFilters({ coaches, gameSlug }: Props) {
                       </div>
                       <div className={styles.cardMeta}>
                         <span className={styles.rankBadge} style={{ background: `${rankColor}15`, color: rankColor, border: `1px solid ${rankColor}40` }}>
-                          👑 {gameData.rank}
+                          {rankImages[gameData.rankTier] && (
+                            <img src={rankImages[gameData.rankTier]} alt={gameData.rank} className={styles.rankEmblem} />
+                          )}
+                          {gameData.rank}
                         </span>
                         {coach.ratingAvg > 0 && <span className={styles.rating}>⭐ {coach.ratingAvg}</span>}
                         {coach.totalSessions > 0 && <span>{coach.totalSessions} {t("coachFilters", "sessions")}</span>}

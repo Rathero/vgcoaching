@@ -22,7 +22,8 @@
 .cardFlag { font-size: 0.9rem; }
 .verified { width: 16px; height: 16px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: white; }
 .cardMeta { display: flex; align-items: center; gap: var(--space-sm); font-size: 0.8rem; color: var(--color-text-muted); flex-wrap: wrap; }
-.rankBadge { padding: 2px 8px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; }
+.rankBadge { padding: 2px 8px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+.rankEmblem { width: 18px; height: 18px; object-fit: contain; filter: drop-shadow(0 0 3px currentColor); }
 .rating { color: var(--color-warning); font-family: var(--font-mono); }
 .cardBody { padding: 0 var(--space-lg) var(--space-lg); }
 .cardBio { font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.6; margin-bottom: var(--space-md); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

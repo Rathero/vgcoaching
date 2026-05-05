@@ -3,7 +3,9 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import BookingSidebar from "@/components/BookingSidebar/BookingSidebar";
+import CoachGallery from "@/components/CoachGallery/CoachGallery";
 import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, getCommissionRate, rankColors } from "@/lib/firestore";
+import { rankImages } from "@/lib/utils";
 import styles from "./page.module.css";
 
 export default async function CoachProfilePage(props: PageProps<"/games/[slug]/coach/[coachSlug]">) {
@@ -43,7 +45,10 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                   </div>
                   <div className={styles.metaRow}>
                     <span className={styles.rankBig} style={{ background: `${rankColor}15`, color: rankColor, border: `1px solid ${rankColor}40` }}>
-                      👑 {gameData.rank}
+                      {rankImages[gameData.rankTier] && (
+                        <img src={rankImages[gameData.rankTier]} alt={gameData.rank} className={styles.rankEmblem} />
+                      )}
+                      {gameData.rank}
                     </span>
                     {reviews.length > 0 && <span className={styles.ratingBig}>⭐ {coach.ratingAvg}</span>}
                     {(coach.totalSessions > 0 || coach.totalStudents > 0 || coach.eloUpRate > 0) && (
@@ -66,6 +71,11 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                         ⚔️ {coach.riotGameName}#{coach.riotTagLine}
                       </span>
                     )}
+                    {coach.twitchUsername && (
+                      <a href={`https://twitch.tv/${coach.twitchUsername}`} target="_blank" rel="noopener noreferrer" className={styles.langTag} style={{ background: 'rgba(145,70,255,0.12)', color: '#9146FF', borderColor: 'rgba(145,70,255,0.3)', textDecoration: 'none' }}>
+                        📺 {coach.twitchUsername}
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -74,6 +84,13 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 <h2 className={styles.sectionTitle}>📖 Sobre mí</h2>
                 <p className={styles.bio}>{coach.longBio}</p>
               </div>
+
+              {coach.galleryImages && coach.galleryImages.length > 0 && (
+                <div className={styles.section}>
+                  <h2 className={styles.sectionTitle}>📸 Galería</h2>
+                  <CoachGallery images={coach.galleryImages} />
+                </div>
+              )}
 
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>🎮 Líneas</h2>

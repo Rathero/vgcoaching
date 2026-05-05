@@ -11,7 +11,8 @@
 .flag { font-size: 1.3rem; }
 .verifiedBig { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; }
 .metaRow { display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-md); }
-.rankBig { padding: 4px 14px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; }
+.rankBig { padding: 4px 14px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.rankEmblem { width: 24px; height: 24px; object-fit: contain; filter: drop-shadow(0 0 4px currentColor); }
 .ratingBig { font-family: var(--font-mono); font-size: 0.95rem; color: var(--color-warning); }
 .stat { font-size: 0.85rem; color: var(--color-text-muted); }
 .statValue { font-weight: 700; color: var(--color-text); }

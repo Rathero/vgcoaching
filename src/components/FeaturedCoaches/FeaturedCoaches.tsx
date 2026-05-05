@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getFeaturedCoaches } from "@/lib/firestore";
-import { formatPrice, rankColors } from "@/lib/utils";
+import { formatPrice, rankColors, rankImages } from "@/lib/utils";
 import { FeaturedCoachesHeader, SessionsLabel, PriceLabel, ViewProfileBtn, ViewAllCoachesLink } from "./FeaturedCoachesTexts";
 import styles from "./FeaturedCoaches.module.css";
 
@@ -65,7 +65,10 @@ export default async function FeaturedCoaches() {
                   <div className={styles.cardMeta}>
                     {gameData?.rank && (
                       <span className={styles.rankBadge} style={rankStyle}>
-                        👑 {gameData.rank}
+                        {rankImages[gameData.rankTier] && (
+                          <img src={rankImages[gameData.rankTier]} alt={gameData.rank} className={styles.rankEmblem} />
+                        )}
+                        {gameData.rank}
                       </span>
                     )}
                     {coach.ratingAvg > 0 && (

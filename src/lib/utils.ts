@@ -7,6 +7,13 @@ export const rankColors: Record<string, string> = {
   diamond: "#576cce",
 };
 
+export const rankImages: Record<string, string> = {
+  challenger: "/ranks/challenger.png",
+  grandmaster: "/ranks/grandmaster.png",
+  master: "/ranks/master.png",
+  diamond: "/ranks/diamond.png",
+};
+
 export function getMinPrice(options: { priceCents: number }[]): number {
   if (options.length === 0) return 0;
   return Math.min(...options.map(o => o.priceCents));

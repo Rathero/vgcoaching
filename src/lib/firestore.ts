@@ -404,4 +404,4 @@ export async function getMasterclassById(id: string): Promise<Masterclass | null
 }
 
 // ─── Helpers (re-export from utils for server convenience) ───
-export { getMinPrice, formatPrice, rankColors } from "./utils";
+export { getMinPrice, formatPrice, rankColors, rankImages } from "./utils";
