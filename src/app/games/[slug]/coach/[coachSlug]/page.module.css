@@ -4,20 +4,112 @@
 .back:hover { color: var(--color-primary-light); }
 .layout { display: grid; grid-template-columns: 1fr 380px; gap: var(--space-2xl); align-items: start; }
 .layoutSingle { grid-template-columns: 1fr; }
-.profileHeader { display: flex; gap: var(--space-xl); margin-bottom: var(--space-2xl); }
+.profileHeader { display: flex; gap: var(--space-xl); margin-bottom: var(--space-2xl); position: relative; }
 .avatar { width: 100px; height: 100px; border-radius: 50%; background: var(--color-bg-subtle); display: flex; align-items: center; justify-content: center; font-size: 3rem; border: 3px solid var(--color-border-light); flex-shrink: 0; object-fit: cover; }
+.headerInfo { flex: 1; min-width: 0; }
 .nameRow { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs); flex-wrap: wrap; }
 .name { font-size: 1.8rem; font-weight: 700; }
 .flag { font-size: 1.3rem; }
 .verifiedBig { width: 24px; height: 24px; border-radius: 50%; background: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; }
 .metaRow { display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-md); }
 .rankBig { padding: 4px 14px; border-radius: var(--radius-full); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-.rankEmblem { width: 24px; height: 24px; object-fit: contain; filter: drop-shadow(0 0 4px currentColor); }
+.rankEmblemSmall { width: 22px; height: 22px; object-fit: contain; filter: drop-shadow(0 0 4px currentColor); }
 .ratingBig { font-family: var(--font-mono); font-size: 0.95rem; color: var(--color-warning); }
 .stat { font-size: 0.85rem; color: var(--color-text-muted); }
 .statValue { font-weight: 700; color: var(--color-text); }
-.languages { display: flex; gap: var(--space-xs); }
+.languages { display: flex; flex-wrap: wrap; gap: var(--space-xs); }
 .langTag { padding: 3px 10px; border-radius: var(--radius-full); font-size: 0.75rem; background: var(--color-bg-subtle); border: 1px solid var(--color-border); color: var(--color-text-secondary); }
+.socialTag { padding: 3px 10px; border-radius: var(--radius-full); font-size: 0.75rem; display: inline-flex; align-items: center; gap: 4px; text-decoration: none; background: color-mix(in srgb, var(--social-color, var(--color-primary)) 10%, transparent); border: 1px solid color-mix(in srgb, var(--social-color, var(--color-primary)) 25%, transparent); color: var(--social-color, var(--color-primary)); transition: all var(--transition-fast); }
+.socialTag:hover { background: color-mix(in srgb, var(--social-color, var(--color-primary)) 18%, transparent); }
+
+/* Big rank emblem */
+.rankEmblemBig {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+  margin-top: -20px;
+}
+.rankEmblemBig img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 24px rgba(244, 200, 116, 0.5));
+  transition: transform 0.3s ease;
+  margin-bottom: -12px;
+}
+.rankEmblemBig:hover img {
+  transform: scale(1.08);
+}
+.rankEmblemLabel {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Social media section */
+.socialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-sm);
+}
+.socialCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+  transition: all var(--transition-fast);
+}
+.socialCard:hover {
+  border-color: var(--social-color, var(--color-primary));
+  background: color-mix(in srgb, var(--social-color, var(--color-primary)) 8%, var(--color-bg-elevated));
+  transform: translateY(-1px);
+}
+.socialIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--social-color, var(--color-primary)) 12%, transparent);
+  color: var(--social-color, var(--color-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+.socialCard:hover .socialIcon {
+  background: color-mix(in srgb, var(--social-color, var(--color-primary)) 20%, transparent);
+}
+.socialInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.socialPlatform {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-muted);
+}
+.socialHandle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .section { margin-bottom: var(--space-2xl); }
 .sectionTitle { font-size: 1.2rem; font-weight: 700; margin-bottom: var(--space-md); display: flex; align-items: center; gap: var(--space-sm); }
 .bio { font-size: 0.95rem; color: var(--color-text-secondary); line-height: 1.8; white-space: pre-line; }
@@ -93,4 +185,8 @@
   .metaRow { justify-content: center; }
   .nameRow { justify-content: center; }
   .sidebarWrap { position: static; }
+  .rankEmblemBig { margin-left: 0; }
+  .rankEmblemBig img { width: 80px; height: 80px; }
+  .socialsGrid { grid-template-columns: 1fr; }
+  .languages { justify-content: center; }
 }

@@ -39,8 +39,10 @@ export interface Coach {
   discordId?: string;
   discordUsername?: string;
   discordAvatar?: string;
-  // Twitch integration
+  // Social media
   twitchUsername?: string;
+  instagramUsername?: string;
+  twitterUsername?: string;
   galleryImages?: string[]; // optional carousel images for coach profile
   createdAt: string;
 }

@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import BookingSidebar from "@/components/BookingSidebar/BookingSidebar";
 import CoachGallery from "@/components/CoachGallery/CoachGallery";
+import { TwitchIcon, InstagramIcon, TwitterIcon, DiscordIcon } from "@/components/SocialIcons/SocialIcons";
 import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, getCommissionRate, rankColors } from "@/lib/firestore";
 import { rankImages } from "@/lib/utils";
 import styles from "./page.module.css";
@@ -22,6 +23,8 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
   const rankColor = rankColors[gameData.rankTier];
   const commissionRate = getCommissionRate(coach);
 
+  const hasSocials = coach.twitchUsername || coach.instagramUsername || coach.twitterUsername || coach.discordUsername;
+
   return (
     <>
       <Navbar />
@@ -37,19 +40,13 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 ) : (
                   <div className={styles.avatar}>{coach.avatar}</div>
                 )}
-                <div>
+                <div className={styles.headerInfo}>
                   <div className={styles.nameRow}>
                     <h1 className={styles.name}>{coach.displayName}</h1>
                     <span className={styles.flag}>{coach.countryFlag}</span>
                     {coach.verified && <span className={styles.verifiedBig}>✓</span>}
                   </div>
                   <div className={styles.metaRow}>
-                    <span className={styles.rankBig} style={{ background: `${rankColor}15`, color: rankColor, border: `1px solid ${rankColor}40` }}>
-                      {rankImages[gameData.rankTier] && (
-                        <img src={rankImages[gameData.rankTier]} alt={gameData.rank} className={styles.rankEmblem} />
-                      )}
-                      {gameData.rank}
-                    </span>
                     {reviews.length > 0 && <span className={styles.ratingBig}>⭐ {coach.ratingAvg}</span>}
                     {(coach.totalSessions > 0 || coach.totalStudents > 0 || coach.eloUpRate > 0) && (
                       <>
@@ -61,23 +58,41 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                   </div>
                   <div className={styles.languages}>
                     {coach.languages.map(l => <span key={l} className={styles.langTag}>🗣️ {l}</span>)}
-                    {coach.discordUsername && (
-                      <span className={styles.langTag} style={{ background: 'rgba(88,101,242,0.12)', color: '#5865F2', borderColor: 'rgba(88,101,242,0.3)' }}>
-                        🎮 {coach.discordUsername}
-                      </span>
-                    )}
                     {coach.riotGameName && (
                       <span className={styles.langTag} style={{ background: 'rgba(210,60,60,0.12)', color: '#D23C3C', borderColor: 'rgba(210,60,60,0.3)' }}>
                         ⚔️ {coach.riotGameName}#{coach.riotTagLine}
                       </span>
                     )}
                     {coach.twitchUsername && (
-                      <a href={`https://twitch.tv/${coach.twitchUsername}`} target="_blank" rel="noopener noreferrer" className={styles.langTag} style={{ background: 'rgba(145,70,255,0.12)', color: '#9146FF', borderColor: 'rgba(145,70,255,0.3)', textDecoration: 'none' }}>
-                        📺 {coach.twitchUsername}
+                      <a href={`https://twitch.tv/${coach.twitchUsername}`} target="_blank" rel="noopener noreferrer" className={styles.socialTag} style={{ '--social-color': '#9146FF' } as React.CSSProperties}>
+                        <TwitchIcon size={14} /> {coach.twitchUsername}
                       </a>
+                    )}
+                    {coach.instagramUsername && (
+                      <a href={`https://instagram.com/${coach.instagramUsername}`} target="_blank" rel="noopener noreferrer" className={styles.socialTag} style={{ '--social-color': '#E4405F' } as React.CSSProperties}>
+                        <InstagramIcon size={14} /> @{coach.instagramUsername}
+                      </a>
+                    )}
+                    {coach.twitterUsername && (
+                      <a href={`https://x.com/${coach.twitterUsername}`} target="_blank" rel="noopener noreferrer" className={styles.socialTag} style={{ '--social-color': '#ffffff' } as React.CSSProperties}>
+                        <TwitterIcon size={14} /> @{coach.twitterUsername}
+                      </a>
+                    )}
+                    {coach.discordUsername && (
+                      <span className={styles.socialTag} style={{ '--social-color': '#5865F2' } as React.CSSProperties}>
+                        <DiscordIcon size={14} /> {coach.discordUsername}
+                      </span>
                     )}
                   </div>
                 </div>
+
+                {/* Big rank emblem floating right */}
+                {rankImages[gameData.rankTier] && (
+                  <div className={styles.rankEmblemBig}>
+                    <img src={rankImages[gameData.rankTier]} alt={gameData.rank} />
+                    <span className={styles.rankEmblemLabel} style={{ color: rankColor }}>{gameData.rank}</span>
+                  </div>
+                )}
               </div>
 
               <div className={styles.section}>
