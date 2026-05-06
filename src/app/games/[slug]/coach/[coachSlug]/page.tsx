@@ -107,12 +107,14 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 </div>
               )}
 
+              {game.slug === 'league-of-legends' && gameData.roles.length > 0 && (
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>🎮 Líneas</h2>
                 <div className={styles.rolesGrid}>
                   {gameData.roles.map(r => <span key={r.id} className={styles.roleChip}>{r.icon} {r.name}</span>)}
                 </div>
               </div>
+              )}
 
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>🎯 Especialidades</h2>
@@ -121,12 +123,14 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 </div>
               </div>
 
+              {gameData.champions && gameData.champions.length > 0 && (
               <div className={styles.section}>
                 <h2 className={styles.sectionTitle}>⚔️ Campeones</h2>
                 <div className={styles.champGrid}>
                   {gameData.champions.map(c => <span key={c} className={styles.champChip}>{c}</span>)}
                 </div>
               </div>
+              )}
 
               {reviews.length > 0 && (
               <div className={styles.section}>
