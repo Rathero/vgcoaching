@@ -43,8 +43,9 @@ export async function POST(req: NextRequest) {
     // For shadow bookings, use the parent booking's room name
     const effectiveBookingId = booking.parentBookingId || bookingId;
 
-    // Check time window — allow 10 min before scheduled time (skip in dev)
-    if (process.env.NODE_ENV !== "development") {
+    // Check time window — allow 10 min before scheduled time (skip in dev, for demo user and coaches)
+    const isDemoOrCoach = decoded.email === "rath1212@gmail.com" || isCoach;
+    if (process.env.NODE_ENV !== "development" && !isDemoOrCoach) {
       const scheduledDateTime = new Date(`${booking.scheduledDate}T${booking.scheduledTime}:00`);
       const now = new Date();
       const tenMinBefore = new Date(scheduledDateTime.getTime() - 10 * 60 * 1000);

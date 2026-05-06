@@ -106,6 +106,8 @@ export default function DashboardContent() {
   const canJoin = (booking: typeof allBookings[0]) => {
     // Dev mode: always allow joining for testing
     if (process.env.NODE_ENV === "development") return true;
+    // Demo/coach: always allow joining for demos and coach accounts
+    if (user?.email === "rath1212@gmail.com" || profile?.role === "coach") return true;
     const scheduled = new Date(`${booking.scheduledDate}T${booking.scheduledTime}:00`);
     const tenMinBefore = new Date(scheduled.getTime() - 10 * 60 * 1000);
     const sessionEnd = new Date(scheduled.getTime() + 60 * 60 * 1000);
