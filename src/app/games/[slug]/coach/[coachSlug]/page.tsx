@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import BookingSidebar from "@/components/BookingSidebar/BookingSidebar";
 import CoachGallery from "@/components/CoachGallery/CoachGallery";
-import { TwitchIcon, InstagramIcon, TwitterIcon, DiscordIcon } from "@/components/SocialIcons/SocialIcons";
+import { TwitchIcon, InstagramIcon, TwitterIcon, DiscordIcon, YouTubeIcon } from "@/components/SocialIcons/SocialIcons";
 import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, getCommissionRate, rankColors } from "@/lib/firestore";
 import { rankImages } from "@/lib/utils";
 import styles from "./page.module.css";
@@ -23,7 +23,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
   const rankColor = rankColors[gameData.rankTier];
   const commissionRate = getCommissionRate(coach);
 
-  const hasSocials = coach.twitchUsername || coach.instagramUsername || coach.twitterUsername || coach.discordUsername;
+  const hasSocials = coach.twitchUsername || coach.instagramUsername || coach.twitterUsername || coach.discordUsername || coach.youtubeChannel;
 
   return (
     <>
@@ -82,6 +82,11 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                       <span className={styles.socialTag} style={{ '--social-color': '#5865F2' } as React.CSSProperties}>
                         <DiscordIcon size={14} /> {coach.discordUsername}
                       </span>
+                    )}
+                    {coach.youtubeChannel && (
+                      <a href={`https://youtube.com/channel/${coach.youtubeChannel}`} target="_blank" rel="noopener noreferrer" className={styles.socialTag} style={{ '--social-color': '#FF0000' } as React.CSSProperties}>
+                        <YouTubeIcon size={14} /> YouTube
+                      </a>
                     )}
                   </div>
                 </div>

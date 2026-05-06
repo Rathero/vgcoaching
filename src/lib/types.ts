@@ -43,6 +43,7 @@ export interface Coach {
   twitchUsername?: string;
   instagramUsername?: string;
   twitterUsername?: string;
+  youtubeChannel?: string;
   galleryImages?: string[]; // optional carousel images for coach profile
   createdAt: string;
 }
