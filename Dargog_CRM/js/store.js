@@ -200,6 +200,17 @@ const Store = {
   setEstadoManual(id, estado) {
     const idx = state.leads.findIndex(l => l.id === id);
     if (idx === -1) return;
+    
+    const oldEstado = state.leads[idx].estadoManual;
+    if (oldEstado !== estado) {
+      state.leads[idx].historialEdiciones.push({
+        fecha: new Date().toISOString(),
+        cambios: {
+          estadoManual: { antes: oldEstado || '(vacío)', despues: estado || '(vacío)' }
+        }
+      });
+    }
+
     state.leads[idx].estadoManual = estado;
     saveLeadToDB(state.leads[idx]);
     return state.leads[idx];

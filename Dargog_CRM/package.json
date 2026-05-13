@@ -1,0 +1,8 @@
+{
+  "name": "dargog-crm",
+  "version": "1.0.0",
+  "description": "Dargog CRM Local Server",
+  "scripts": {
+    "dev": "npx serve -p 8080"
+  }
+}

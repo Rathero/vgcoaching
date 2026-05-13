@@ -30,40 +30,60 @@ function fieldLabel(key) {
   return labels[key] || key;
 }
 
-function renderTimeline(lead) {
-  const contacts = [...(lead.contactos || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-  if (contacts.length === 0) return '<p class="text-muted text-sm">No hay contactos registrados aún.</p>';
-  return `<div class="timeline">${contacts.map(c => {
-    const filesHtml = (c.archivos && c.archivos.length > 0)
-      ? `<div class="timeline-files">${c.archivos.map(f =>
-          `<a class="timeline-file-link" href="${f.data}" download="${f.nombre}">📎 ${f.nombre}</a>`
-        ).join('')}</div>` : '';
-    return `<div class="timeline-item">
-      <div class="timeline-dot"></div>
-      <div class="timeline-header">
-        <span class="timeline-via">${c.via}</span>
-        <span class="timeline-date">${formatDate(c.fecha)}</span>
-      </div>
-      <div class="timeline-content">
-        ${c.notas ? `<div class="timeline-notes">${c.notas}</div>` : '<div class="timeline-notes text-muted">Sin notas</div>'}
-        ${filesHtml}
-      </div>
-    </div>`;
-  }).join('')}</div>`;
-}
+function renderUnifiedHistory(lead) {
+  // Map contacts
+  const contacts = (lead.contactos || []).map(c => ({
+    type: 'contacto',
+    fecha: c.fecha,
+    data: c
+  }));
+  
+  // Map edits
+  const edits = (lead.historialEdiciones || []).map(e => ({
+    type: 'edicion',
+    fecha: e.fecha,
+    data: e
+  }));
 
-function renderEditHistory(lead) {
-  const edits = [...(lead.historialEdiciones || [])].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-  if (edits.length === 0) return '<p class="text-muted text-sm">No hay ediciones registradas.</p>';
-  return `<div class="timeline">${edits.map(e => {
-    const changesHtml = Object.entries(e.cambios).map(([key, val]) =>
-      `<div class="edit-change"><span class="field-name">${fieldLabel(key)}:</span> <span class="old-val">${val.antes || '(vacío)'}</span> → <span class="new-val">${val.despues || '(vacío)'}</span></div>`
-    ).join('');
-    return `<div class="timeline-item type-edit">
-      <div class="timeline-dot"></div>
-      <div class="timeline-header"><span class="timeline-date">${formatDateTime(e.fecha)}</span></div>
-      <div class="timeline-content">${changesHtml}</div>
-    </div>`;
+  // Combine and sort descending by date
+  const timeline = [...contacts, ...edits].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+  if (timeline.length === 0) return '<p class="text-muted text-sm">No hay actividad registrada aún.</p>';
+
+  return `<div class="timeline">${timeline.map(item => {
+    if (item.type === 'contacto') {
+      const c = item.data;
+      const filesHtml = (c.archivos && c.archivos.length > 0)
+        ? `<div class="timeline-files">${c.archivos.map(f =>
+            `<a class="timeline-file-link" href="${f.data}" download="${f.nombre}">📎 ${f.nombre}</a>`
+          ).join('')}</div>` : '';
+      return `<div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-via">Contacto vía: ${c.via}</span>
+          <span class="timeline-date">${formatDateTime(c.fecha)}</span>
+        </div>
+        <div class="timeline-content">
+          ${c.notas ? `<div class="timeline-notes">${c.notas}</div>` : '<div class="timeline-notes text-muted">Sin notas</div>'}
+          ${filesHtml}
+        </div>
+      </div>`;
+    } else {
+      // Edición
+      const e = item.data;
+      const changesHtml = Object.entries(e.cambios).map(([key, val]) =>
+        `<div class="edit-change">
+          <span class="field-name">Cambio en ${fieldLabel(key)}:</span><br/>
+          <span class="old-val" style="color: #ef4444; text-decoration: line-through;">Antes: ${val.antes || '(vacío)'}</span><br/>
+          <span class="new-val" style="color: #10b981;">Nuevo: ${val.despues || '(vacío)'}</span>
+        </div>`
+      ).join('');
+      return `<div class="timeline-item type-edit" style="background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px;">
+        <div class="timeline-dot" style="background: var(--text-muted)"></div>
+        <div class="timeline-header"><span class="timeline-date" style="color: var(--text-muted)">📝 Edición — ${formatDateTime(e.fecha)}</span></div>
+        <div class="timeline-content" style="margin-top: 8px;">${changesHtml}</div>
+      </div>`;
+    }
   }).join('')}</div>`;
 }
 
@@ -116,15 +136,9 @@ export function renderLeadDetail(leadId, onBack) {
         <!-- Right column: History with tabs -->
         <div class="detail-col-right">
           <div class="detail-section">
-            <div class="history-tabs">
-              <button class="history-tab active" data-tab="contacto">📋 Historial de contacto</button>
-              <button class="history-tab" data-tab="ediciones">🕓 Historial de ediciones</button>
-            </div>
-            <div class="history-panel" id="panel-contacto">
-              ${renderTimeline(lead)}
-            </div>
-            <div class="history-panel" id="panel-ediciones" style="display:none">
-              ${renderEditHistory(lead)}
+            <div class="detail-section-title">🕒 Historial del Lead</div>
+            <div class="history-panel" id="panel-historial">
+              ${renderUnifiedHistory(lead)}
             </div>
           </div>
         </div>
@@ -153,16 +167,7 @@ export function renderLeadDetail(leadId, onBack) {
     });
   });
 
-  // History tabs
-  view.querySelectorAll('.history-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      view.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const target = tab.dataset.tab;
-      document.getElementById('panel-contacto').style.display = target === 'contacto' ? '' : 'none';
-      document.getElementById('panel-ediciones').style.display = target === 'ediciones' ? '' : 'none';
-    });
-  });
+
 
   // Edit lead
   document.getElementById('btn-edit-lead').addEventListener('click', () => {
