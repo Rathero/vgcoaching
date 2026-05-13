@@ -69,7 +69,9 @@ async function saveSettingsToDB() {
 
 function calcEstado(lead) {
   if (lead.estadoManual === 'cliente') return 'cliente';
-  if (lead.estadoManual === 'muerto') return 'muerto';
+  if (lead.estadoManual === 'perdido') return 'perdido';
+  if (lead.estadoManual === 'reunion_agendada') return 'reunion_agendada';
+  if (lead.estadoManual === 'esperando_info') return 'esperando_info';
   if (lead.contactos && lead.contactos.length > 0) return 'contactado';
   return 'pendiente';
 }
@@ -296,7 +298,7 @@ const Store = {
     const now = Date.now();
     return state.leads.filter(lead => {
       const estado = calcEstado(lead);
-      if (estado === 'muerto' || estado === 'cliente') return false;
+      if (estado === 'perdido' || estado === 'cliente' || estado === 'reunion_agendada') return false;
       const last = getLastContact(lead);
       if (!last) return false; 
       return (now - new Date(last.fecha).getTime()) > twoDaysMs;

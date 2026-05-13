@@ -10,10 +10,12 @@ function formatDate(dateStr) {
 
 function statusBadge(estado) {
   const map = {
-    pendiente: { cls: 'badge-pending', text: 'Pendiente' },
+    pendiente: { cls: 'badge-pending', text: 'Pendiente de contactar' },
     contactado: { cls: 'badge-contacted', text: 'Contactado' },
     cliente: { cls: 'badge-client', text: 'Cliente' },
-    muerto: { cls: 'badge-dead', text: 'Muerto' }
+    perdido: { cls: 'badge-dead', text: 'Perdido' },
+    reunion_agendada: { cls: 'badge-contacted', text: 'Reunión agendada' },
+    esperando_info: { cls: 'badge-pending', text: 'Esperando info de perfil' }
   };
   const s = map[estado] || map.pendiente;
   return `<span class="badge ${s.cls}">${s.text}</span>`;
