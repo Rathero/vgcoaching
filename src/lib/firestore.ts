@@ -124,7 +124,7 @@ export async function getBookedSlotsRange(coachId: string, startDate: string, en
     const data = d.data();
     // Filter by date range and active status in JS
     if (data.scheduledDate >= startDate && data.scheduledDate <= endDate &&
-        (data.status === "pending" || data.status === "confirmed")) {
+        data.status === "confirmed") {
       if (!result[data.scheduledDate]) result[data.scheduledDate] = [];
       result[data.scheduledDate].push(data.scheduledTime);
     }

@@ -95,13 +95,28 @@ export default function DashboardContent() {
     ...coachBookings.map(b => ({ ...b, _role: "coach" as const, coachDisplayName: "Tu sesión" })),
   ];
 
-  const upcoming = allBookings.filter(b =>
-    b.status !== "cancelled" && b.status !== "completed" && b.sessionStatus !== "completed"
-  ).sort((a, b) => `${a.scheduledDate}T${a.scheduledTime}`.localeCompare(`${b.scheduledDate}T${b.scheduledTime}`));
+  // Helper: check if a booking's scheduled time is in the past
+  const isBookingPast = (b: typeof allBookings[0]) => {
+    const scheduled = new Date(`${b.scheduledDate}T${b.scheduledTime}:00`);
+    const sessionEnd = new Date(scheduled.getTime() + 60 * 60 * 1000);
+    return now > sessionEnd;
+  };
 
-  const past = allBookings.filter(b =>
-    b.status === "completed" || b.sessionStatus === "completed"
-  ).sort((a, b) => `${b.scheduledDate}T${b.scheduledTime}`.localeCompare(`${a.scheduledDate}T${a.scheduledTime}`));
+  const upcoming = allBookings.filter(b => {
+    // Exclude cancelled, completed, and pending (unpaid) bookings
+    if (b.status === "cancelled" || b.status === "completed" || b.sessionStatus === "completed") return false;
+    if (b.status === "pending") return false;
+    // Exclude past confirmed sessions that never happened
+    if (b.status === "confirmed" && b.sessionStatus !== "live" && isBookingPast(b)) return false;
+    return true;
+  }).sort((a, b) => `${a.scheduledDate}T${a.scheduledTime}`.localeCompare(`${b.scheduledDate}T${b.scheduledTime}`));
+
+  const past = allBookings.filter(b => {
+    if (b.status === "completed" || b.sessionStatus === "completed") return true;
+    // Past confirmed sessions that were never completed => no_show
+    if (b.status === "confirmed" && b.sessionStatus !== "live" && isBookingPast(b)) return true;
+    return false;
+  }).sort((a, b) => `${b.scheduledDate}T${b.scheduledTime}`.localeCompare(`${a.scheduledDate}T${a.scheduledTime}`));
 
   const canJoin = (booking: typeof allBookings[0]) => {
     // Dev mode: always allow joining for testing
@@ -133,6 +148,8 @@ export default function DashboardContent() {
   const getStatusClass = (booking: typeof allBookings[0]) => {
     if (booking.sessionStatus === "live") return styles.statusLive;
     if (booking.status === "completed" || booking.sessionStatus === "completed") return styles.statusCompleted;
+    // Past confirmed but not completed => no_show
+    if (booking.status === "confirmed" && isBookingPast(booking)) return styles.statusNoShow;
     if (booking.status === "confirmed") return styles.statusConfirmed;
     return styles.statusPending;
   };
@@ -140,6 +157,8 @@ export default function DashboardContent() {
   const getStatusLabel = (booking: typeof allBookings[0]) => {
     if (booking.sessionStatus === "live") return "🔴 EN VIVO";
     if (booking.status === "completed" || booking.sessionStatus === "completed") return "Completada";
+    // Past confirmed but not completed => no_show
+    if (booking.status === "confirmed" && isBookingPast(booking)) return "No asistida";
     if (booking.status === "confirmed") return "Confirmada";
     return "Pendiente";
   };
