@@ -27,9 +27,14 @@
             <h1>Gestión de Leads</h1>
             <p class="view-subtitle" id="leads-count"></p>
           </div>
-          <button id="btn-create-lead" class="btn btn-primary">
-            <span>+</span> Crear nuevo lead
-          </button>
+          <div style="display: flex; gap: 12px;">
+            <button id="btn-sync-coaches" class="btn" style="background: var(--surface-light); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.875rem;">
+              <span>🔄</span> Sincronizar BBDD
+            </button>
+            <button id="btn-create-lead" class="btn btn-primary">
+              <span>+</span> Crear nuevo lead
+            </button>
+          </div>
         </div>
         <div class="table-wrapper">
           <table id="leads-table">

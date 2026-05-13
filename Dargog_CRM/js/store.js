@@ -57,6 +57,7 @@ const Store = {
     const leads = this.getLeads();
     const lead = {
       id: generateId(),
+      coachId: data.coachId || null,
       nombre: data.nombre || '',
       apellidos: data.apellidos || '',
       email: data.email || '',
