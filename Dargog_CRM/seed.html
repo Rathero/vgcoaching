@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cargar Leads</title>
+  <style>
+    body { background: #07070e; color: #e8eaf6; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+    .card { background: #131325; padding: 40px; border-radius: 16px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+    .btn { background: #6366f1; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-decoration: none; margin-top: 20px; display: inline-block; font-weight: bold; }
+    .btn:hover { background: #8b5cf6; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✅ Leads cargados correctamente</h1>
+    <p>Se han añadido los 10 leads a tu base de datos local.</p>
+    <a href="/" class="btn">Volver al CRM</a>
+  </div>
+  <script type="module">
+    import Store from './js/store.js';
+
+    // Función para limpiar leads anteriores si lo deseas (opcional, por ahora solo añadimos)
+    // Store.getLeads().forEach(l => Store.deleteLead(l.id));
+
+    const date7 = '2026-05-07';
+    const date6 = '2026-05-06';
+
+    // 1. Th3Antonio
+    Store.createLead({ nombre: 'Th3Antonio' });
+
+    // 2. Attila (Cliente, 7/05, Discord)
+    const attila = Store.createLead({ nombre: 'Attila' });
+    Store.setEstadoManual(attila.id, 'cliente');
+    Store.addContact(attila.id, { fecha: date7, via: 'Discord', notas: '' });
+
+    // 3. Maurogarih
+    Store.createLead({ nombre: 'Maurogarih' });
+
+    // 4. Solx1d (Contactado 6/05)
+    const sol = Store.createLead({ nombre: 'Solx1d' });
+    Store.addContact(sol.id, { fecha: date6, via: 'Desconocida', notas: '' });
+
+    // 5. Elmillor
+    Store.createLead({ nombre: 'Elmillor' });
+
+    // 6. Elojoninja (Contactado 6/05)
+    const elojo = Store.createLead({ nombre: 'Elojoninja' });
+    Store.addContact(elojo.id, { fecha: date6, via: 'Desconocida', notas: '' });
+
+    // 7. Poochipoom
+    Store.createLead({ nombre: 'Poochipoom' });
+
+    // 8. Manute (TFT)
+    Store.createLead({ nombre: 'Manute (TFT)' });
+
+    // 9. Akawonder (TFT)
+    Store.createLead({ nombre: 'Akawonder (TFT)' });
+
+    // 10. Pablo (TFT) (Contactado 6/05)
+    const pablo = Store.createLead({ nombre: 'Pablo (TFT)' });
+    Store.addContact(pablo.id, { fecha: date6, via: 'Desconocida', notas: '' });
+
+  </script>
+</body>
+</html>
