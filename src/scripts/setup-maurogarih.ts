@@ -54,8 +54,8 @@ async function run() {
   await db.collection("coachGames").add({
     coachId: COACH_ID,
     gameId: "lol",
-    rank: "Challenger",
-    rankTier: "challenger",
+    rank: "Master",
+    rankTier: "master",
     roles: [
       { id: "mid", name: "Mid", icon: "⚔️" },
       { id: "top", name: "Top", icon: "🗡️" },

@@ -20,6 +20,11 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
 
   const options = await getCoachOptions(coach.id);
   const reviews = await getCoachReviews(coach.id);
+
+  const displayRating = reviews.length > 0 
+    ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) * 10) / 10
+    : coach.ratingAvg;
+
   const rankColor = rankColors[gameData.rankTier];
   const commissionRate = getCommissionRate(coach);
 
@@ -47,7 +52,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                     {coach.verified && <span className={styles.verifiedBig}>✓</span>}
                   </div>
                   <div className={styles.metaRow}>
-                    {reviews.length > 0 && <span className={styles.ratingBig}>⭐ {coach.ratingAvg}</span>}
+                    {reviews.length > 0 && <span className={styles.ratingBig}>⭐ {displayRating}</span>}
                     {(coach.totalSessions > 0 || coach.totalStudents > 0 || coach.eloUpRate > 0) && (
                       <>
                         {coach.totalSessions > 0 && <span className={styles.stat}><span className={styles.statValue}>{coach.totalSessions}</span> sesiones</span>}
@@ -144,12 +149,12 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 {/* Rating summary */}
                   <div className={`glass-card ${styles.ratingSummary}`}>
                     <div className={styles.ratingBigNumber}>
-                      <span className={styles.ratingValue}>{coach.ratingAvg}</span>
+                      <span className={styles.ratingValue}>{displayRating}</span>
                       <span className={styles.ratingMax}>/5</span>
                     </div>
                     <div className={styles.ratingStarsLarge}>
                       {[1, 2, 3, 4, 5].map(s => (
-                        <span key={s} className={s <= Math.round(coach.ratingAvg) ? styles.starFilledLg : styles.starEmptyLg}>★</span>
+                        <span key={s} className={s <= Math.round(displayRating) ? styles.starFilledLg : styles.starEmptyLg}>★</span>
                       ))}
                     </div>
                     <span className={styles.ratingCount}>{reviews.length} valoracion{reviews.length !== 1 ? "es" : ""}</span>

@@ -8,12 +8,12 @@ dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 const sa = process.env.ADMIN_SERVICE_ACCOUNT_KEY;
 if (!sa) { console.error("Missing key"); process.exit(1); }
 
-const app = initializeApp({ credential: cert(JSON.parse(sa)) }, "setup-pochipoom");
+const app = initializeApp({ credential: cert(JSON.parse(sa)) }, "setup-th3antonio");
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-const COACH_ID = "pochipoom";
-const COACH_EMAIL = "pochipoom@gmail.com";
+const COACH_ID = "th3antonio";
+const COACH_EMAIL = "th3antonio@gmail.com";
 const STUDENT_UID = "8it2OQh63GemTtuZntDGqCHm8Ui2";
 const STUDENT_NAME = "Rubén Ausín";
 const STUDENT_EMAIL = "rath1212@gmail.com";
@@ -22,24 +22,24 @@ async function run() {
   console.log(`🎮 Full setup for ${COACH_ID}...\n`);
 
   await db.collection("coaches").doc(COACH_ID).set({
-    slug: "pochipoom",
-    displayName: "PochiPoom",
-    avatar: "https://static-cdn.jtvnw.net/jtv_user_pictures/81d12cc2-29c4-431d-ab07-c800c09dc2f5-profile_image-70x70.png",
-    bio: "He sido Entrenador profesional/Director deportivo de LoL (KIYF, ASUS, S2V, G2Arctic, UCAM). Peak Elo: MASTER",
-    longBio: "He sido Entrenador profesional/Director deportivo de LoL (KIYF, ASUS, S2V, G2Arctic, UCAM). Peak Elo: MASTER",
+    slug: "th3antonio",
+    displayName: "Th3Antonio",
+    avatar: "https://yt3.googleusercontent.com/QyDblf2qS0nsKOKddVwNZIp1-yAuEM1Xjb-z52dufJSPL-LFozg-cyaU_BkoNrt01qWBItK4uQ=s900-c-k-c0x00ffffff-no-rj",
+    bio: 'Streamer, esports player y creador de contenido nacido en Málaga. Su carrera competitiva en League of Legends arrancó hacia 2015 en el circuito europeo. Actualmente jungla de GIANTX Pride y figura habitual de la escena española, apodado "El pelucas".',
+    longBio: 'Streamer, esports player y creador de contenido nacido en Málaga el 12 de abril de 1999. Su carrera competitiva en League of Legends arrancó hacia 2015 en el circuito europeo. Actualmente jungla de GIANTX Pride y figura habitual de la escena española, apodado "El pelucas". Combina la competición con streams en Twitch y vídeo corto en TikTok, y ha colaborado con figuras como Ibai Llanos o El Xokas.',
     country: "ES",
     countryFlag: "🇪🇸",
     languages: ["Español", "Inglés"],
     verified: true,
     listed: false,
     ratingAvg: 0, totalSessions: 0, totalStudents: 0, eloUpRate: 0,
-    twitchUsername: "pochipoom",
-    instagramUsername: "pochipoom",
-    twitterUsername: "PochiPoom",
+    twitchUsername: "th3antonio",
+    instagramUsername: "th3antoniogg",
+    twitterUsername: "Th3AntonioGG",
     galleryImages: [
-      "https://as.com/esports/imagenes/2017/12/22/league_of_legends/1513959280_234628_1513959476_noticia_normal.jpg",
-      "https://i.ytimg.com/vi/Z386g91T9_A/maxresdefault.jpg",
-      "https://api.setupsgamers.com/images/streamers/PochiPoom.jpeg",
+      "https://static.wikia.nocookie.net/lolesports_gamepedia_en/images/5/53/GXP_Th3Antonio_2024_Split_1.png/revision/latest/scale-to-width-down/250?cb=20240202164953",
+      "https://s2.elespanol.com/2022/02/18/deportes/otros-deportes/651195281_221993186_1706x1280.jpg",
+      "https://static.grupojoly.com/clip/628d57ec-2f0d-4bd5-b1bf-7ef63b6920c7_source-aspect-ratio_1600w_0.jpg",
     ],
     createdAt: new Date().toISOString(),
   });
@@ -47,10 +47,10 @@ async function run() {
 
   await db.collection("coachGames").add({
     coachId: COACH_ID, gameId: "lol",
-    rank: "Master", rankTier: "master",
+    rank: "Challenger", rankTier: "challenger",
     roles: [{ id: "jungle", name: "Jungle", icon: "🌲" }],
-    specialties: ["Invade", "Powerfarming"],
-    champions: ["Shaco"],
+    specialties: ["Versatilidad multi-rol", "Comentario táctico en directo"],
+    champions: [],
   });
   console.log("  ✅ CoachGame");
 
@@ -74,15 +74,15 @@ async function run() {
     coachUid = existing.uid;
     console.log("  ℹ️  Auth user exists:", coachUid);
   } catch {
-    const u = await auth.createUser({ email: COACH_EMAIL, password: "12345678", displayName: "PochiPoom" });
+    const u = await auth.createUser({ email: COACH_EMAIL, password: "12345678", displayName: "Th3Antonio" });
     coachUid = u.uid;
     console.log("  ✅ Auth user created:", coachUid);
   }
 
   const now = new Date().toISOString();
   await db.collection("users").doc(coachUid).set({
-    uid: coachUid, displayName: "PochiPoom", email: COACH_EMAIL,
-    photoURL: "https://static-cdn.jtvnw.net/jtv_user_pictures/81d12cc2-29c4-431d-ab07-c800c09dc2f5-profile_image-70x70.png",
+    uid: coachUid, displayName: "Th3Antonio", email: COACH_EMAIL,
+    photoURL: "https://yt3.googleusercontent.com/QyDblf2qS0nsKOKddVwNZIp1-yAuEM1Xjb-z52dufJSPL-LFozg-cyaU_BkoNrt01qWBItK4uQ=s900-c-k-c0x00ffffff-no-rj",
     role: "coach", coachId: COACH_ID, coachApplicationStatus: "approved",
     createdAt: now, updatedAt: now,
   }, { merge: true });
@@ -111,15 +111,15 @@ async function run() {
   await db.collection("bookings").add({
     coachId: COACH_ID, coachingOptionId: opt1.id,
     studentId: STUDENT_UID, studentName: STUDENT_NAME, studentEmail: STUDENT_EMAIL,
-    scheduledDate: "2026-05-08", scheduledTime: "18:00",
+    scheduledDate: "2026-05-15", scheduledTime: "18:00",
     status: "confirmed", sessionStatus: "scheduled",
     notes: "", amountCents: 5000, isGroupSession: false,
-    createdAt: "2026-05-06T12:00:00.000Z", updatedAt: "2026-05-06T12:00:00.000Z",
+    createdAt: "2026-05-12T12:00:00.000Z", updatedAt: "2026-05-12T12:00:00.000Z",
   });
   console.log("  ✅ Upcoming booking");
 
   console.log(`\n🎉 Done! Login: ${COACH_EMAIL} / 12345678`);
-  console.log(`  URL: /games/league-of-legends/coach/${COACH_ID}`);
+  console.log(`  URL: https://dargog.com/games/league-of-legends/coach/${COACH_ID}`);
 }
 
 run().catch(console.error);

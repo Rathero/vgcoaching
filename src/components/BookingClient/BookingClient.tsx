@@ -231,7 +231,7 @@ export default function BookingClient({ coach, gameData, options, availability, 
         <div className={`glass-card ${styles.summaryCard}`}>
           <h3 className={styles.summaryTitle}>Resumen</h3>
           <div className={styles.summaryCoach}>
-            <div className={styles.summaryAvatar}>{coach.avatar}</div>
+            <div className={styles.summaryAvatar}>{coach.avatar ? <img src={coach.avatar} alt={coach.displayName} /> : "🎮"}</div>
             <div>
               <div className={styles.summaryCoachName}>{coach.displayName}</div>
               <div className={styles.summaryCoachMeta}>👑 {gameData.rank} · ⭐ {coach.ratingAvg}</div>
