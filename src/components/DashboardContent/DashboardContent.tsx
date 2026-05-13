@@ -173,6 +173,7 @@ export default function DashboardContent() {
     const joinable = canJoin(booking);
     const countdown = getCountdown(booking);
     const isPast = booking.status === "completed" || booking.sessionStatus === "completed";
+    const isNoShow = booking.status === "confirmed" && booking.sessionStatus !== "live" && isBookingPast(booking);
 
     return (
       <div
@@ -230,7 +231,7 @@ export default function DashboardContent() {
         </div>
 
         <div className={styles.cardActions}>
-          {!isPast && (
+          {!isPast && !isNoShow && (
             <>
               <Link
                 href={joinable ? `/session/${booking.id}` : "#"}
@@ -273,10 +274,15 @@ export default function DashboardContent() {
               )}
             </>
           )}
+          {isNoShow && (
+            <Link href={`/session/${booking.id}/prep`} className={styles.historyBtn}>
+              📋 Ver historial
+            </Link>
+          )}
         </div>
 
-        {/* Inline review form */}
-        {reviewingBookingId === booking.id && booking._role === "student" && (
+        {/* Inline review form — only for completed, not no-show */}
+        {reviewingBookingId === booking.id && booking._role === "student" && isPast && !isNoShow && (
           <div className={styles.reviewSection}>
             <SessionReview
               bookingId={booking.id}
@@ -290,7 +296,7 @@ export default function DashboardContent() {
         )}
 
         {/* Group invite panel — only for the buyer of group sessions */}
-        {booking.isGroupSession && !booking.parentBookingId && booking._role === "student" && !isPast && userToken && (
+        {booking.isGroupSession && !booking.parentBookingId && booking._role === "student" && !isPast && !isNoShow && userToken && (
           <GroupInvitePanel
             booking={booking}
             userToken={userToken}
