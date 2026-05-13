@@ -27,10 +27,7 @@
             <h1>Gestión de Leads</h1>
             <p class="view-subtitle" id="leads-count"></p>
           </div>
-          <div style="display: flex; gap: 12px;">
-            <button id="btn-sync-coaches" class="btn" style="background: var(--surface-light); border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0 16px; border-radius: 8px; font-weight: 500; font-size: 0.875rem;">
-              <span>🔄</span> Sincronizar BBDD
-            </button>
+          <div>
             <button id="btn-create-lead" class="btn btn-primary">
               <span>+</span> Crear nuevo lead
             </button>
@@ -65,6 +62,13 @@
 
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
+
+  <!-- Loading Overlay -->
+  <div id="loading-overlay" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: white;">
+    <div style="font-size: 2rem; margin-bottom: 1rem; animation: spin 1s linear infinite;">⏳</div>
+    <h3>Conectando con la Base de Datos...</h3>
+    <style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+  </div>
 
   <script type="module" src="js/app.js"></script>
 </body>

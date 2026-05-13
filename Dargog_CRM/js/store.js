@@ -1,14 +1,21 @@
-// store.js — Data management with localStorage
-const KEYS = {
-  leads: 'dargog_leads',
-  vias: 'dargog_vias',
-  columns: 'dargog_columns',
-  reminder: 'dargog_reminder_later'
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAV3-HCIVJIqNTWOUmO1wj1BBsfTcOOHUM",
+  authDomain: "videogamecoaching-a4794.firebaseapp.com",
+  projectId: "videogamecoaching-a4794",
+  storageBucket: "videogamecoaching-a4794.firebasestorage.app",
+  messagingSenderId: "266704815891",
+  appId: "1:266704815891:web:b85c15bce443f9e7eafce6",
+  measurementId: "G-9Z7Y0QLRY9",
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const DEFAULT_VIAS = ['Instagram', 'Discord', 'Twitter', 'Email', 'WhatsApp'];
 const DEFAULT_COLUMNS = ['nombre', 'apellidos', 'fechaUltimoContacto', 'viaUltimoContacto', 'estado', 'email', 'telefono'];
-
 const COLUMN_LABELS = {
   nombre: 'Nombre',
   apellidos: 'Apellidos',
@@ -23,15 +30,41 @@ function generateId() {
   return crypto.randomUUID ? crypto.randomUUID() : 'xxxx-xxxx-xxxx-xxxx'.replace(/x/g, () => Math.floor(Math.random() * 16).toString(16));
 }
 
-function load(key, fallback) {
+// In-memory state for synchronous UI rendering (Optimistic UI)
+let state = {
+  leads: [],
+  vias: [...DEFAULT_VIAS],
+  columns: [...DEFAULT_COLUMNS],
+  reminder: null
+};
+
+// Async helpers to sync to Firestore
+async function saveLeadToDB(lead) {
   try {
-    const d = localStorage.getItem(key);
-    return d ? JSON.parse(d) : fallback;
-  } catch { return fallback; }
+    await setDoc(doc(db, "crm_leads", lead.id), lead);
+  } catch (error) {
+    console.error("Error saving lead to DB:", error);
+  }
 }
 
-function save(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
+async function deleteLeadFromDB(id) {
+  try {
+    await deleteDoc(doc(db, "crm_leads", id));
+  } catch (error) {
+    console.error("Error deleting lead from DB:", error);
+  }
+}
+
+async function saveSettingsToDB() {
+  try {
+    await setDoc(doc(db, "crm_settings", "global"), {
+      vias: state.vias,
+      columns: state.columns,
+      reminder: state.reminder
+    });
+  } catch (error) {
+    console.error("Error saving settings to DB:", error);
+  }
 }
 
 function calcEstado(lead) {
@@ -47,14 +80,77 @@ function getLastContact(lead) {
   return sorted[0];
 }
 
-// Public API
 const Store = {
-  getLeads() { return load(KEYS.leads, []); },
+  // Initialization - called by app.js on startup
+  async init() {
+    try {
+      // 1. Fetch settings
+      const settingsDoc = await getDoc(doc(db, "crm_settings", "global"));
+      if (settingsDoc.exists()) {
+        const data = settingsDoc.data();
+        if (data.vias) state.vias = data.vias;
+        if (data.columns) state.columns = data.columns;
+        if (data.reminder !== undefined) state.reminder = data.reminder;
+      }
 
-  getLead(id) { return this.getLeads().find(l => l.id === id) || null; },
+      // 2. Fetch leads
+      const leadsSnap = await getDocs(collection(db, "crm_leads"));
+      const loadedLeads = [];
+      leadsSnap.forEach(doc => {
+        loadedLeads.push(doc.data());
+      });
+      state.leads = loadedLeads;
+
+      // 3. Fetch coaches and auto-sync
+      const coachesSnap = await getDocs(collection(db, "coaches"));
+      let newLeadsAdded = false;
+
+      coachesSnap.forEach((coachDoc) => {
+        const coachData = coachDoc.data();
+        const coachId = coachDoc.id;
+        
+        const exists = state.leads.find(l => l.coachId === coachId || l.nombre.toLowerCase() === coachData.displayName.toLowerCase());
+        
+        if (!exists) {
+          let notasAdicionales = `Coach importado dinámicamente de Dargog (ID: ${coachId}).\n`;
+          if (coachData.discordUsername) notasAdicionales += `Discord: ${coachData.discordUsername}\n`;
+          if (coachData.instagramUsername) notasAdicionales += `Instagram: @${coachData.instagramUsername}\n`;
+          if (coachData.twitterUsername) notasAdicionales += `Twitter: @${coachData.twitterUsername}\n`;
+          if (coachData.twitchUsername) notasAdicionales += `Twitch: ${coachData.twitchUsername}\n`;
+          if (coachData.bio) notasAdicionales += `\nBio:\n${coachData.bio}\n`;
+
+          const lead = {
+            id: generateId(),
+            coachId: coachId,
+            nombre: coachData.displayName || 'Desconocido',
+            apellidos: '', 
+            email: '', 
+            telefono: '',
+            estadoManual: null,
+            notas: notasAdicionales.trim(),
+            contactos: [],
+            historialEdiciones: [],
+            creadoEn: new Date().toISOString()
+          };
+          
+          state.leads.push(lead);
+          saveLeadToDB(lead);
+          newLeadsAdded = true;
+        }
+      });
+      
+      return newLeadsAdded;
+    } catch (error) {
+      console.error("Error initializing Store from Firebase:", error);
+      throw error;
+    }
+  },
+
+  getLeads() { return state.leads; },
+
+  getLead(id) { return state.leads.find(l => l.id === id) || null; },
 
   createLead(data) {
-    const leads = this.getLeads();
     const lead = {
       id: generateId(),
       coachId: data.coachId || null,
@@ -68,7 +164,6 @@ const Store = {
       historialEdiciones: [],
       creadoEn: new Date().toISOString()
     };
-    // If initial contact data provided
     if (data.fechaContacto && data.viaContacto) {
       lead.contactos.push({
         id: generateId(),
@@ -78,16 +173,15 @@ const Store = {
         archivos: []
       });
     }
-    leads.push(lead);
-    save(KEYS.leads, leads);
+    state.leads.push(lead);
+    saveLeadToDB(lead);
     return lead;
   },
 
   updateLead(id, changes) {
-    const leads = this.getLeads();
-    const idx = leads.findIndex(l => l.id === id);
+    const idx = state.leads.findIndex(l => l.id === id);
     if (idx === -1) return null;
-    const lead = leads[idx];
+    const lead = state.leads[idx];
     const edicion = { fecha: new Date().toISOString(), cambios: {} };
     for (const key of Object.keys(changes)) {
       if (lead[key] !== changes[key]) {
@@ -98,23 +192,21 @@ const Store = {
     if (Object.keys(edicion.cambios).length > 0) {
       lead.historialEdiciones.push(edicion);
     }
-    leads[idx] = lead;
-    save(KEYS.leads, leads);
+    state.leads[idx] = lead;
+    saveLeadToDB(lead);
     return lead;
   },
 
   setEstadoManual(id, estado) {
-    const leads = this.getLeads();
-    const idx = leads.findIndex(l => l.id === id);
+    const idx = state.leads.findIndex(l => l.id === id);
     if (idx === -1) return;
-    leads[idx].estadoManual = estado;
-    save(KEYS.leads, leads);
-    return leads[idx];
+    state.leads[idx].estadoManual = estado;
+    saveLeadToDB(state.leads[idx]);
+    return state.leads[idx];
   },
 
   addContact(leadId, contactData) {
-    const leads = this.getLeads();
-    const idx = leads.findIndex(l => l.id === leadId);
+    const idx = state.leads.findIndex(l => l.id === leadId);
     if (idx === -1) return null;
     const contact = {
       id: generateId(),
@@ -123,81 +215,83 @@ const Store = {
       notas: contactData.notas || '',
       archivos: contactData.archivos || []
     };
-    leads[idx].contactos.push(contact);
-    save(KEYS.leads, leads);
-    return leads[idx];
+    state.leads[idx].contactos.push(contact);
+    saveLeadToDB(state.leads[idx]);
+    return state.leads[idx];
   },
 
   deleteLead(id) {
-    const leads = this.getLeads().filter(l => l.id !== id);
-    save(KEYS.leads, leads);
+    state.leads = state.leads.filter(l => l.id !== id);
+    deleteLeadFromDB(id);
   },
 
-  // Vías de contacto
-  getVias() { return load(KEYS.vias, [...DEFAULT_VIAS]); },
+  getVias() { return state.vias; },
+  
   addVia(via) {
-    const vias = this.getVias();
-    if (!vias.includes(via)) { vias.push(via); save(KEYS.vias, vias); }
-    return vias;
+    if (!state.vias.includes(via)) { 
+      state.vias.push(via); 
+      saveSettingsToDB();
+    }
+    return state.vias;
   },
 
   deleteVia(via) {
-    // Remove from vías list
-    const vias = this.getVias().filter(v => v !== via);
-    save(KEYS.vias, vias);
-    // Clear from all leads' contacts and register in edit history
-    const leads = this.getLeads();
+    state.vias = state.vias.filter(v => v !== via);
+    saveSettingsToDB();
+    
     let changed = false;
-    for (const lead of leads) {
+    for (const lead of state.leads) {
       const affected = lead.contactos.filter(c => c.via === via);
       if (affected.length > 0) {
         for (const c of affected) { c.via = '(eliminada)'; }
         lead.historialEdiciones.push({
           fecha: new Date().toISOString(),
           cambios: {
-            viaContacto: {
-              antes: via,
-              despues: '(eliminada) — Vía eliminada del sistema'
-            }
+            viaContacto: { antes: via, despues: '(eliminada) — Vía eliminada del sistema' }
           }
         });
+        saveLeadToDB(lead);
         changed = true;
       }
     }
-    if (changed) save(KEYS.leads, leads);
-    return vias;
+    return state.vias;
   },
 
-  // Column order
-  getColumnOrder() { return load(KEYS.columns, [...DEFAULT_COLUMNS]); },
-  setColumnOrder(order) { save(KEYS.columns, order); },
+  getColumnOrder() { return state.columns; },
+  setColumnOrder(order) { 
+    state.columns = order; 
+    saveSettingsToDB(); 
+  },
 
-  // Reminders
-  getReminderLater() { return load(KEYS.reminder, null); },
-  setReminderLater() { save(KEYS.reminder, Date.now()); },
-  clearReminderLater() { save(KEYS.reminder, null); },
+  getReminderLater() { return state.reminder; },
+  setReminderLater() { 
+    state.reminder = Date.now(); 
+    saveSettingsToDB();
+  },
+  clearReminderLater() { 
+    state.reminder = null; 
+    saveSettingsToDB();
+  },
 
   shouldShowReminder() {
     const ts = this.getReminderLater();
-    if (!ts) return true; // never postponed
+    if (!ts) return true;
     const hourMs = 60 * 60 * 1000;
     return (Date.now() - ts) > hourMs;
   },
 
   getLeadsToRemind() {
-    const leads = this.getLeads();
     const twoDaysMs = 2 * 24 * 60 * 60 * 1000;
     const now = Date.now();
-    return leads.filter(lead => {
+    return state.leads.filter(lead => {
       const estado = calcEstado(lead);
       if (estado === 'muerto' || estado === 'cliente') return false;
       const last = getLastContact(lead);
-      if (!last) return false; // pendiente, no reminder needed for those with no contact
+      if (!last) return false; 
       return (now - new Date(last.fecha).getTime()) > twoDaysMs;
     });
   },
 
-  // Helpers
   calcEstado,
   getLastContact,
   COLUMN_LABELS,

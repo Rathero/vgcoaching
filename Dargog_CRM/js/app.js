@@ -3,39 +3,34 @@ import { renderLeadsTable } from './leads.js';
 import { renderLeadDetail } from './leadDetail.js';
 import { openCreateLeadModal } from './modals.js';
 import { checkReminders } from './reminders.js';
-import { syncCoaches } from './firebaseSync.js';
+import Store from './store.js';
 
 class App {
   constructor() {
     this.leadsView = document.getElementById('leads-view');
     this.detailView = document.getElementById('lead-detail-view');
     this.createBtn = document.getElementById('btn-create-lead');
-    this.syncBtn = document.getElementById('btn-sync-coaches');
+    this.loadingOverlay = document.getElementById('loading-overlay');
 
     this.createBtn.addEventListener('click', () => {
       openCreateLeadModal(() => this.refreshTable());
     });
 
-    this.syncBtn.addEventListener('click', async () => {
-      this.syncBtn.disabled = true;
-      const originalHtml = this.syncBtn.innerHTML;
-      this.syncBtn.innerHTML = '<span>⏳</span> Sincronizando...';
-      try {
-        const count = await syncCoaches();
-        alert(`Sincronización completada. Se importaron ${count} nuevos coaches.`);
-        this.refreshTable();
-      } catch (error) {
-        alert("Error al sincronizar: " + error.message);
-      } finally {
-        this.syncBtn.disabled = false;
-        this.syncBtn.innerHTML = originalHtml;
-      }
-    });
+    this.initializeApp();
+  }
 
-    this.initRouter();
-
-    // Check reminders after a short delay so the UI renders first
-    setTimeout(() => checkReminders(), 500);
+  async initializeApp() {
+    if (this.loadingOverlay) this.loadingOverlay.style.display = 'flex';
+    try {
+      await Store.init();
+    } catch (e) {
+      console.error(e);
+      alert('Error inicializando CRM: ' + e.message);
+    } finally {
+      if (this.loadingOverlay) this.loadingOverlay.style.display = 'none';
+      this.initRouter();
+      setTimeout(() => checkReminders(), 500);
+    }
   }
 
   initRouter() {
