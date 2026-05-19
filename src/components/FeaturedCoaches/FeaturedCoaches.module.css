@@ -195,6 +195,22 @@
   border: 1px solid rgba(157, 72, 196, 0.25);
 }
 
+.proBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, rgba(255, 200, 55, 0.12), rgba(255, 160, 20, 0.08));
+  border: 1px solid rgba(255, 200, 55, 0.3);
+  color: #f4c874;
+}
+
 .rating {
   font-family: var(--font-mono);
   font-size: 0.8rem;

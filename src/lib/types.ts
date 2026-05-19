@@ -61,6 +61,8 @@ export interface CoachGame {
   rank: string;
   rankTier: "challenger" | "grandmaster" | "master" | "diamond";
   roles: Role[];
+  secondaryRoles?: Role[];
+  isProPlayer?: boolean;
   specialties: string[];
   champions: string[];
 }

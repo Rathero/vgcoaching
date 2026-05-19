@@ -50,6 +50,38 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
+.proPlayerTag {
+  margin-top: 4px;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: linear-gradient(135deg, rgba(255, 200, 55, 0.15), rgba(255, 160, 20, 0.10));
+  border: 1px solid rgba(255, 200, 55, 0.35);
+  color: #f4c874;
+  white-space: nowrap;
+}
+.rolesDivider {
+  display: flex;
+  align-items: center;
+  color: var(--color-border-light);
+  font-size: 1.1rem;
+  padding: 0 4px;
+  user-select: none;
+}
+.roleChipSecondary {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  background: rgba(124, 92, 252, 0.04);
+  border: 1px solid rgba(124, 92, 252, 0.12);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
 
 /* Social media section */
 .socialsGrid {

@@ -71,6 +71,9 @@ export default async function FeaturedCoaches() {
                         {gameData.rank}
                       </span>
                     )}
+                    {gameData?.isProPlayer && (
+                      <span className={styles.proBadge}>⚡ Pro</span>
+                    )}
                     {coach.ratingAvg > 0 && (
                       <span className={styles.rating}>⭐ {coach.ratingAvg}</span>
                     )}

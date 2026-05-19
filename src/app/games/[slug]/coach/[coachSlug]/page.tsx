@@ -101,6 +101,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                   <div className={styles.rankEmblemBig}>
                     <img src={rankImages[gameData.rankTier]} alt={gameData.rank} />
                     <span className={styles.rankEmblemLabel} style={{ color: rankColor }}>{gameData.rank}</span>
+                    {gameData.isProPlayer && <span className={styles.proPlayerTag}>⚡ Pro Player</span>}
                   </div>
                 )}
               </div>
@@ -122,6 +123,12 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
                 <h2 className={styles.sectionTitle}>🎮 Líneas</h2>
                 <div className={styles.rolesGrid}>
                   {gameData.roles.map(r => <span key={r.id} className={styles.roleChip}>{r.icon} {r.name}</span>)}
+                  {gameData.secondaryRoles && gameData.secondaryRoles.length > 0 && (
+                    <>
+                      <span className={styles.rolesDivider}>|</span>
+                      {gameData.secondaryRoles.map(r => <span key={r.id} className={styles.roleChipSecondary}>{r.icon} {r.name}</span>)}
+                    </>
+                  )}
                 </div>
               </div>
               )}
