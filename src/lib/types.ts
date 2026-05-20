@@ -39,6 +39,12 @@ export interface Coach {
   discordId?: string;
   discordUsername?: string;
   discordAvatar?: string;
+  // Booking notifications (configured by coach in DB)
+  notificationEmail?: string;             // Where coach receives booking emails
+  notificationDiscordWebhookUrl?: string; // Discord webhook URL to post bookings
+  notificationDiscordWebhookChannelId?: string;
+  notificationDiscordWebhookGuildId?: string;
+  notificationDiscordWebhookName?: string;
   // Social media
   twitchUsername?: string;
   instagramUsername?: string;

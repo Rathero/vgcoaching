@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import type { Booking } from "@/lib/types";
+import type { Booking, Coach } from "@/lib/types";
 import SessionReview from "@/components/SessionReview/SessionReview";
 import GroupInvitePanel from "@/components/GroupInvitePanel/GroupInvitePanel";
 import styles from "./DashboardContent.module.css";
@@ -19,6 +19,7 @@ export default function DashboardContent() {
   const router = useRouter();
   const [studentBookings, setStudentBookings] = useState<EnrichedBooking[]>([]);
   const [coachBookings, setCoachBookings] = useState<Booking[]>([]);
+  const [coachDoc, setCoachDoc] = useState<Coach | null>(null);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [now, setNow] = useState(new Date());
@@ -44,6 +45,7 @@ export default function DashboardContent() {
         const data = await res.json();
         setStudentBookings(data.studentBookings || []);
         setCoachBookings(data.coachBookings || []);
+        setCoachDoc(data.coach || null);
 
         // Check review status for past student bookings
         const pastStudentBookings = (data.studentBookings || []).filter(
@@ -432,6 +434,37 @@ export default function DashboardContent() {
                     )}
                   </div>
                 )}
+
+                {/* Discord webhook for booking notifications — coach only */}
+                {discordConfigured && profile?.role === "coach" && (() => {
+                  const webhookRedirect = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_REDIRECT_URI || "";
+                  const clientId = process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || "";
+                  const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(webhookRedirect)}&response_type=code&scope=webhook.incoming&state=${user?.uid || ""}`;
+                  const isConnected = !!coachDoc?.notificationDiscordWebhookUrl;
+                  return (
+                    <div className={`glass-card ${styles.connectionCard}`}>
+                      <div className={styles.connectionHeader}>
+                        <span className={styles.connectionIcon} style={{ color: "#5865F2" }}>🔔</span>
+                        <div>
+                          <strong>Notificaciones Discord</strong>
+                          <span className={styles.connectionDesc}>
+                            {isConnected
+                              ? `Webhook activo${coachDoc?.notificationDiscordWebhookName ? ` · ${coachDoc.notificationDiscordWebhookName}` : ""}`
+                              : "Recibe tus reservas en un canal de Discord"}
+                          </span>
+                        </div>
+                      </div>
+                      {isConnected ? (
+                        <div className={styles.connectionConnected}>
+                          <span className={styles.connectedBadge}>✅ Conectado</span>
+                          <a className={styles.connectBtn} href={oauthUrl}>Cambiar canal</a>
+                        </div>
+                      ) : (
+                        <a className={styles.connectBtn} href={oauthUrl}>Conectar</a>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 {/* Discord */}
                 {discordConfigured && (

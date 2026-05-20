@@ -21,10 +21,12 @@ export async function GET(req: NextRequest) {
     // Get student bookings
     const studentBookings = await getUserBookings(uid);
 
-    // Get coach bookings if user is a coach
+    // Get coach bookings + coach doc if user is a coach
     let coachBookings: typeof studentBookings = [];
+    let coach = null;
     if (profile.role === "coach" && profile.coachId) {
       coachBookings = await getCoachSessionBookings(profile.coachId);
+      coach = await getCoachById(profile.coachId);
     }
 
     // Enrich bookings with coach display names
@@ -39,6 +41,7 @@ export async function GET(req: NextRequest) {
       profile,
       studentBookings: enrichedStudentBookings,
       coachBookings,
+      coach,
     });
   } catch (error) {
     console.error("Dashboard data error:", error);

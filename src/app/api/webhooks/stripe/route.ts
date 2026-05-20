@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
+import { notifyCoachOfBooking } from "@/lib/notifications";
 
 export async function POST(request: NextRequest) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date().toISOString(),
         });
         console.log(`✅ Booking ${bookingId} confirmed via webhook`);
+        await notifyCoachOfBooking(bookingId);
       }
       break;
     }

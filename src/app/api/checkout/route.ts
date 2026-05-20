@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { getCoachById, getCoachingOptionById, createBooking, getCommissionRate, calculateCommission } from "@/lib/firestore";
 import { adminAuth } from "@/lib/firebase-admin";
+import { notifyCoachOfBooking } from "@/lib/notifications";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -71,6 +72,18 @@ export async function POST(request: NextRequest) {
     : "";
   const productName = `${option.name} con ${coach.displayName}${groupLabel}`;
   const productDesc = `${option.durationMinutes} min · ${scheduledDate} a las ${scheduledTime}`;
+
+  // Free booking path — skip Stripe entirely when total is 0
+  if (totalCents === 0) {
+    console.log(`🆓 Free booking ${bookingId} — skipping Stripe`);
+    const { adminDb } = await import("@/lib/firebase-admin");
+    await adminDb.collection("bookings").doc(bookingId).update({
+      status: "confirmed",
+      updatedAt: new Date().toISOString(),
+    });
+    await notifyCoachOfBooking(bookingId);
+    return Response.json({ url: `/booking/success?booking=${bookingId}&free=true` });
+  }
 
   // Stripe checkout
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -149,6 +162,7 @@ export async function POST(request: NextRequest) {
   await adminDb.collection("bookings").doc(bookingId).update({
     status: "confirmed",
   });
+  await notifyCoachOfBooking(bookingId);
 
   const successUrl = `/booking/success?booking=${bookingId}&demo=true`;
   return Response.json({ url: successUrl });
