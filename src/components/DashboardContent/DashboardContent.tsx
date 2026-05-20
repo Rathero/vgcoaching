@@ -4,9 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/lib/auth-context";
-import type { Booking, Coach } from "@/lib/types";
+import type { Booking, Coach, CoachBundle, CoachingOption } from "@/lib/types";
 import SessionReview from "@/components/SessionReview/SessionReview";
 import GroupInvitePanel from "@/components/GroupInvitePanel/GroupInvitePanel";
+import CoachBundlesManager from "@/components/CoachBundlesManager/CoachBundlesManager";
+import UserBundlesList, { type EnrichedUserBundle } from "@/components/UserBundlesList/UserBundlesList";
 import styles from "./DashboardContent.module.css";
 
 interface EnrichedBooking extends Booking {
@@ -20,6 +22,9 @@ export default function DashboardContent() {
   const [studentBookings, setStudentBookings] = useState<EnrichedBooking[]>([]);
   const [coachBookings, setCoachBookings] = useState<Booking[]>([]);
   const [coachDoc, setCoachDoc] = useState<Coach | null>(null);
+  const [coachBundles, setCoachBundles] = useState<CoachBundle[]>([]);
+  const [coachingOptions, setCoachingOptions] = useState<CoachingOption[]>([]);
+  const [userBundles, setUserBundles] = useState<EnrichedUserBundle[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
   const [now, setNow] = useState(new Date());
@@ -46,6 +51,9 @@ export default function DashboardContent() {
         setStudentBookings(data.studentBookings || []);
         setCoachBookings(data.coachBookings || []);
         setCoachDoc(data.coach || null);
+        setCoachBundles(data.coachBundles || []);
+        setCoachingOptions(data.coachingOptions || []);
+        setUserBundles(data.userBundles || []);
 
         // Check review status for past student bookings
         const pastStudentBookings = (data.studentBookings || []).filter(
@@ -552,6 +560,30 @@ export default function DashboardContent() {
             </div>
           );
         })()}
+
+        {/* Coach Bundles Manager */}
+        {profile?.role === "coach" && (
+          <div className={styles.connectionsSection}>
+            <h2 className={styles.connectionsTitle}>🎟️ Bonos de sesiones</h2>
+            <p style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginBottom: "var(--space-md)" }}>
+              Ofrece packs de N sesiones a un precio reducido. Los alumnos compran el bono y canjean créditos al reservar.
+            </p>
+            <CoachBundlesManager
+              bundles={coachBundles}
+              options={coachingOptions}
+              token={userToken}
+              onChange={fetchData}
+            />
+          </div>
+        )}
+
+        {/* User's purchased bundles */}
+        {userBundles.length > 0 && (
+          <div className={styles.connectionsSection}>
+            <h2 className={styles.connectionsTitle}>🎟️ Mis bonos</h2>
+            <UserBundlesList bundles={userBundles} />
+          </div>
+        )}
       </div>
     </div>
   );

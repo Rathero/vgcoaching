@@ -48,7 +48,6 @@ function buildPlainBody(ctx: BookingContext): string {
     `Fecha: ${booking.scheduledDate} a las ${booking.scheduledTime}`,
     ``,
     `Alumno: ${booking.studentName}`,
-    `Email: ${booking.studentEmail}`,
     booking.notes ? `Notas: ${booking.notes}` : ``,
     ``,
     `Importe pagado: ${formatPrice(booking.amountCents)}`,
@@ -75,7 +74,6 @@ function buildHtmlBody(ctx: BookingContext): string {
     <tr><td><strong>Duración</strong></td><td>${option?.durationMinutes ?? "?"} min</td></tr>
     <tr><td><strong>Fecha</strong></td><td>${escapeHtml(booking.scheduledDate)} a las ${escapeHtml(booking.scheduledTime)}</td></tr>
     <tr><td><strong>Alumno</strong></td><td>${escapeHtml(booking.studentName)}</td></tr>
-    <tr><td><strong>Email</strong></td><td>${escapeHtml(booking.studentEmail)}</td></tr>
     ${notesRow}
     <tr><td><strong>Importe</strong></td><td>${formatPrice(booking.amountCents)}</td></tr>
     <tr><td><strong>Booking ID</strong></td><td><code>${escapeHtml(booking.id)}</code></td></tr>
@@ -140,7 +138,6 @@ async function sendDiscord(ctx: BookingContext): Promise<void> {
     { name: "Duración", value: `${option?.durationMinutes ?? "?"} min`, inline: true },
     { name: "Fecha", value: `${booking.scheduledDate} · ${booking.scheduledTime}`, inline: false },
     { name: "Alumno", value: booking.studentName, inline: true },
-    { name: "Email", value: booking.studentEmail, inline: true },
     { name: "Importe", value: formatPrice(booking.amountCents), inline: true },
   ];
   if (booking.notes) {

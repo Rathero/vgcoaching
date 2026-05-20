@@ -3,7 +3,7 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { auth } from "@/lib/firebase";
-import { Coach, CoachGame, CoachingOption, Availability } from "@/lib/types";
+import { Coach, CoachGame, CoachingOption, Availability, CoachBundle, UserBundle } from "@/lib/types";
 import styles from "./BookingClient.module.css";
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
   options: CoachingOption[];
   availability: Availability[];
   gameSlug: string;
+  bundles?: CoachBundle[];
 }
 
 const DAY_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -21,13 +22,17 @@ function formatPrice(cents: number): string {
   return `${(cents / 100).toFixed(0)}€`;
 }
 
-export default function BookingClient({ coach, gameData, options, availability, gameSlug }: Props) {
+export default function BookingClient({ coach, gameData, options, availability, gameSlug, bundles = [] }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { user } = useAuth();
   const preselectedOption = searchParams.get("option") || "";
+  const preselectedBundleId = searchParams.get("bundle") || "";
 
   const [selectedOptionId, setSelectedOptionId] = useState<string>(preselectedOption || options[0]?.id || "");
+  const [myBundles, setMyBundles] = useState<UserBundle[]>([]);
+  const [useBundleId, setUseBundleId] = useState<string>(preselectedBundleId);
+  const [purchaseBusy, setPurchaseBusy] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(() => new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -45,6 +50,39 @@ export default function BookingClient({ coach, gameData, options, availability, 
       if (user.email && !studentEmail) setStudentEmail(user.email);
     }
   }, [user, studentName, studentEmail]);
+
+  // Load user's purchased bundles
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      if (!auth.currentUser) { setMyBundles([]); return; }
+      try {
+        const token = await auth.currentUser.getIdToken();
+        const res = await fetch("/api/user/bundles", { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json();
+        if (!cancelled) setMyBundles(data.bundles || []);
+      } catch { /* ignore */ }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, [user]);
+
+  // Find a usable bundle for the selected coach+option
+  const usableBundles = useMemo(() => myBundles.filter(b =>
+    b.coachId === coach.id &&
+    b.coachingOptionId === selectedOptionId &&
+    b.status === "active" &&
+    b.remainingSessions > 0
+  ), [myBundles, coach.id, selectedOptionId]);
+
+  const activeBundle = usableBundles.find(b => b.id === useBundleId) || usableBundles[0] || null;
+  const usingBundle = !!useBundleId && !!activeBundle && activeBundle.id === useBundleId;
+
+  // Bundles offered for sale for the selected option
+  const offeredBundles = useMemo(
+    () => bundles.filter(b => b.coachingOptionId === selectedOptionId && b.active),
+    [bundles, selectedOptionId]
+  );
 
   const selectedOption = options.find(o => o.id === selectedOptionId);
   const year = currentMonth.getFullYear();
@@ -125,6 +163,7 @@ export default function BookingClient({ coach, gameData, options, availability, 
           notes,
           idToken,
           gameSlug,
+          useBundleId: usingBundle ? activeBundle?.id : undefined,
         }),
       });
       const data = await res.json();
@@ -145,6 +184,32 @@ export default function BookingClient({ coach, gameData, options, availability, 
   };
 
   const hasDateTime = !!(selectedDate && selectedTime);
+
+  async function buyBundle(bundleId: string) {
+    if (!auth.currentUser) {
+      router.push("/login");
+      return;
+    }
+    setPurchaseBusy(true);
+    try {
+      const idToken = await auth.currentUser.getIdToken();
+      const res = await fetch("/api/checkout/bundle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ bundleId, idToken, gameSlug }),
+      });
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || "Error al comprar el bono");
+      }
+    } catch {
+      setError("Error de conexión");
+    } finally {
+      setPurchaseBusy(false);
+    }
+  }
 
   return (
     <div className={styles.layout}>
@@ -223,6 +288,90 @@ export default function BookingClient({ coach, gameData, options, availability, 
           </div>
         )}
 
+        {/* Bundles section: use credit if available, or buy a new bundle */}
+        {selectedOption && selectedOption.type !== "group_coaching" && (usableBundles.length > 0 || offeredBundles.length > 0) && (
+          <div className={styles.section}>
+            <h2 className={styles.sectionTitle}>🎟️ Bonos</h2>
+
+            {usableBundles.length > 0 && (
+              <div style={{ marginBottom: "var(--space-md)" }}>
+                <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", marginBottom: "8px" }}>
+                  <input
+                    type="checkbox"
+                    checked={usingBundle}
+                    onChange={e => setUseBundleId(e.target.checked ? (activeBundle?.id || usableBundles[0].id) : "")}
+                  />
+                  <strong>Usar crédito de bono</strong>
+                  <span style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
+                    ({usableBundles.reduce((s, b) => s + b.remainingSessions, 0)} sesiones disponibles)
+                  </span>
+                </label>
+                {usingBundle && usableBundles.length > 1 && (
+                  <select
+                    value={useBundleId}
+                    onChange={e => setUseBundleId(e.target.value)}
+                    style={{ padding: "6px 10px", borderRadius: "6px", background: "rgba(0,0,0,0.25)", color: "inherit", border: "1px solid rgba(255,255,255,0.15)" }}
+                  >
+                    {usableBundles.map(b => (
+                      <option key={b.id} value={b.id}>
+                        Bono · {b.remainingSessions} de {b.totalSessions} restantes
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+            )}
+
+            {offeredBundles.length > 0 && !usingBundle && (
+              <>
+                <div style={{ color: "var(--color-text-muted)", fontSize: "0.85rem", marginBottom: "8px" }}>
+                  O ahorra comprando un pack de sesiones:
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: "var(--space-sm)" }}>
+                  {offeredBundles.map(b => {
+                    const perSession = b.priceCents / b.sessions;
+                    const savings = selectedOption.priceCents * b.sessions - b.priceCents;
+                    return (
+                      <div key={b.id} className="glass-card" style={{ padding: "var(--space-md)" }}>
+                        <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>{b.sessions} sesiones</div>
+                        <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--color-primary)", margin: "4px 0" }}>
+                          {formatPrice(b.priceCents)}
+                        </div>
+                        <div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>
+                          {formatPrice(Math.round(perSession))} / sesión
+                        </div>
+                        {savings > 0 && (
+                          <div style={{ fontSize: "0.75rem", color: "#4ade80", marginTop: "2px" }}>
+                            Ahorras {formatPrice(savings)}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => buyBundle(b.id)}
+                          disabled={purchaseBusy}
+                          style={{
+                            marginTop: "var(--space-sm)",
+                            width: "100%",
+                            padding: "8px 12px",
+                            borderRadius: "var(--radius-full)",
+                            background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-dark))",
+                            color: "white",
+                            border: "none",
+                            cursor: "pointer",
+                            fontSize: "0.8rem",
+                            fontWeight: 600,
+                          }}
+                        >
+                          Comprar bono
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {error && <div className={styles.error}>{error}</div>}
       </div>
 
@@ -268,12 +417,14 @@ export default function BookingClient({ coach, gameData, options, availability, 
           <div className={styles.summaryDivider} />
           <div className={`${styles.summaryRow} ${styles.summaryTotal}`}>
             <span>Total</span>
-            <span className={styles.summaryTotalValue}>{selectedOption ? formatPrice(selectedOption.priceCents) : "—"}</span>
+            <span className={styles.summaryTotalValue}>
+              {usingBundle ? "Gratis (bono)" : (selectedOption ? formatPrice(selectedOption.priceCents) : "—")}
+            </span>
           </div>
           <button className={styles.payBtn} disabled={!canProceed || loading} onClick={handlePay}>
-            {loading ? "Procesando..." : "Pagar y reservar →"}
+            {loading ? "Procesando..." : usingBundle ? "Canjear bono y reservar →" : "Pagar y reservar →"}
           </button>
-          <p className={styles.payNote}>🔒 Pago seguro con Stripe</p>
+          <p className={styles.payNote}>{usingBundle ? "🎟️ Sin coste — se descuenta una sesión de tu bono" : "🔒 Pago seguro con Stripe"}</p>
         </div>
       </div>
     </div>

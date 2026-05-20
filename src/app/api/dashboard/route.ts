@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebase-admin";
-import { getUserProfile, getUserBookings, getCoachSessionBookings, getCoachById } from "@/lib/firestore";
+import { getUserProfile, getUserBookings, getCoachSessionBookings, getCoachById, getCoachOptions } from "@/lib/firestore";
+import { listCoachBundles, listUserBundles } from "@/lib/bundles";
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,13 +22,30 @@ export async function GET(req: NextRequest) {
     // Get student bookings
     const studentBookings = await getUserBookings(uid);
 
-    // Get coach bookings + coach doc if user is a coach
+    // Get coach bookings + coach doc + coach bundles + coaching options if user is a coach
     let coachBookings: typeof studentBookings = [];
     let coach = null;
+    let coachBundles: Awaited<ReturnType<typeof listCoachBundles>> = [];
+    let coachingOptions: Awaited<ReturnType<typeof getCoachOptions>> = [];
     if (profile.role === "coach" && profile.coachId) {
       coachBookings = await getCoachSessionBookings(profile.coachId);
       coach = await getCoachById(profile.coachId);
+      coachBundles = await listCoachBundles(profile.coachId);
+      coachingOptions = await getCoachOptions(profile.coachId);
     }
+
+    const rawUserBundles = await listUserBundles(uid);
+    const userBundles = await Promise.all(rawUserBundles.map(async b => {
+      const c = await getCoachById(b.coachId);
+      const o = await import("@/lib/firestore").then(m => m.getCoachingOptionById(b.coachingOptionId));
+      return {
+        ...b,
+        coachName: c?.displayName,
+        coachSlug: c?.slug,
+        optionName: o?.name,
+        gameSlug: "league-of-legends",
+      };
+    }));
 
     // Enrich bookings with coach display names
     const enrichedStudentBookings = await Promise.all(
@@ -42,6 +60,9 @@ export async function GET(req: NextRequest) {
       studentBookings: enrichedStudentBookings,
       coachBookings,
       coach,
+      coachBundles,
+      coachingOptions,
+      userBundles,
     });
   } catch (error) {
     console.error("Dashboard data error:", error);

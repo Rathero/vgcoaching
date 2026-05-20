@@ -1,0 +1,68 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-lg);
+}
+
+.card {
+  padding: var(--space-lg) !important;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.title { font-size: 0.95rem; font-weight: 700; }
+.subtitle { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 2px; }
+
+.activeBadge, .depletedBadge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.activeBadge { background: rgba(40, 200, 100, 0.15); color: #4ade80; }
+.depletedBadge { background: rgba(255,255,255,0.05); color: var(--color-text-muted); }
+
+.counter { display: flex; align-items: baseline; }
+.counterBig { font-size: 2rem; font-weight: 800; color: var(--color-primary); font-family: var(--font-mono); }
+.counterSmall { font-size: 0.85rem; color: var(--color-text-muted); margin-left: 4px; }
+
+.progressBar {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+  transition: width 0.3s;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.bookBtn {
+  margin-top: var(--space-sm);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  text-decoration: none;
+  text-align: center;
+}
+.bookBtn:hover { box-shadow: 0 0 16px var(--color-primary-glow); }

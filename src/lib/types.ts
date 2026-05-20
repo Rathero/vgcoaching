@@ -152,6 +152,7 @@ export interface Booking {
   amountCents: number;
   commissionCents?: number; // commission charged on this booking
   stripeSessionId?: string;
+  bundleId?: string; // set when this booking was redeemed from a UserBundle
   // Group coaching fields
   isGroupSession?: boolean;
   groupType?: "duo" | "team";
@@ -284,3 +285,33 @@ export interface CoachApplication {
 }
 
 export type RankTier = "challenger" | "grandmaster" | "master" | "diamond";
+
+// ─── Bundles ────────────────────────────────────────────
+// Coach-configured pricing pack: N sessions of a given coaching option for X €.
+export interface CoachBundle {
+  id: string;
+  coachId: string;
+  coachingOptionId: string;
+  sessions: number;     // total sessions included (>=2)
+  priceCents: number;   // total price for the pack
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// A user's purchased bundle. Credits are redeemed when they book a session.
+export interface UserBundle {
+  id: string;
+  userId: string;
+  coachId: string;
+  coachingOptionId: string;
+  bundleId: string;
+  totalSessions: number;
+  remainingSessions: number;
+  status: "active" | "depleted" | "pending";
+  pricePaidCents: number;
+  stripeSessionId?: string;
+  stripePaymentId?: string;
+  purchasedAt: string;
+  updatedAt: string;
+}

@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { adminDb } from "@/lib/firebase-admin";
 import { notifyCoachOfBooking } from "@/lib/notifications";
+import { createUserBundleFromPurchase } from "@/lib/bundles";
 
 export async function POST(request: NextRequest) {
   const stripeKey = process.env.STRIPE_SECRET_KEY;
@@ -32,10 +33,31 @@ export async function POST(request: NextRequest) {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
-      const bookingId = session.metadata?.bookingId;
+      const meta = session.metadata || {};
 
+      // Bundle purchase
+      if (meta.type === "bundle" && meta.bundleId && meta.userId) {
+        try {
+          await createUserBundleFromPurchase({
+            userId: meta.userId,
+            coachId: meta.coachId,
+            coachingOptionId: meta.coachingOptionId,
+            bundleId: meta.bundleId,
+            totalSessions: parseInt(meta.sessions || "0", 10),
+            pricePaidCents: parseInt(meta.priceCents || "0", 10),
+            stripeSessionId: session.id,
+            stripePaymentId: session.payment_intent as string,
+          });
+          console.log(`✅ Bundle ${meta.bundleId} purchased by ${meta.userId}`);
+        } catch (err) {
+          console.error("Failed to create user bundle:", err);
+        }
+        break;
+      }
+
+      // Regular booking
+      const bookingId = meta.bookingId;
       if (bookingId) {
-        // Update booking status to confirmed
         await adminDb.collection("bookings").doc(bookingId).update({
           status: "confirmed",
           stripePaymentId: session.payment_intent as string,

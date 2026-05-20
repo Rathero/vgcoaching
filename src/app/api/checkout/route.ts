@@ -2,10 +2,11 @@ import { NextRequest } from "next/server";
 import { getCoachById, getCoachingOptionById, createBooking, getCommissionRate, calculateCommission } from "@/lib/firestore";
 import { adminAuth } from "@/lib/firebase-admin";
 import { notifyCoachOfBooking } from "@/lib/notifications";
+import { getUserBundleById, redeemBundleSession } from "@/lib/bundles";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { coachId, coachingOptionId, scheduledDate, scheduledTime, studentName, studentEmail, notes, idToken, gameSlug } = body;
+  const { coachId, coachingOptionId, scheduledDate, scheduledTime, studentName, studentEmail, notes, idToken, gameSlug, useBundleId } = body;
 
   const coach = await getCoachById(coachId);
   const option = await getCoachingOptionById(coachingOptionId);
@@ -72,6 +73,52 @@ export async function POST(request: NextRequest) {
     : "";
   const productName = `${option.name} con ${coach.displayName}${groupLabel}`;
   const productDesc = `${option.durationMinutes} min · ${scheduledDate} a las ${scheduledTime}`;
+
+  // Bundle redemption path — user pays with credit instead of money
+  if (useBundleId) {
+    if (studentId === "guest") {
+      const { adminDb } = await import("@/lib/firebase-admin");
+      await adminDb.collection("bookings").doc(bookingId).delete();
+      return Response.json({ error: "Inicia sesión para usar un bono" }, { status: 401 });
+    }
+    const userBundle = await getUserBundleById(useBundleId);
+    if (!userBundle) {
+      const { adminDb } = await import("@/lib/firebase-admin");
+      await adminDb.collection("bookings").doc(bookingId).delete();
+      return Response.json({ error: "Bono no encontrado" }, { status: 404 });
+    }
+    try {
+      await redeemBundleSession({
+        bundleId: useBundleId,
+        userId: studentId,
+        coachId,
+        coachingOptionId,
+      });
+    } catch (err: unknown) {
+      const { adminDb } = await import("@/lib/firebase-admin");
+      await adminDb.collection("bookings").doc(bookingId).delete();
+      const code = err instanceof Error ? err.message : "BUNDLE_ERROR";
+      const messages: Record<string, string> = {
+        BUNDLE_NOT_FOUND: "Bono no encontrado",
+        BUNDLE_NOT_OWNED: "Este bono no es tuyo",
+        BUNDLE_COACH_MISMATCH: "El bono no es de este coach",
+        BUNDLE_OPTION_MISMATCH: "El bono es para otro tipo de sesión",
+        BUNDLE_NOT_ACTIVE: "El bono no está activo",
+        BUNDLE_DEPLETED: "Ya no quedan sesiones en este bono",
+      };
+      return Response.json({ error: messages[code] || "Error al usar el bono" }, { status: 400 });
+    }
+
+    const { adminDb } = await import("@/lib/firebase-admin");
+    await adminDb.collection("bookings").doc(bookingId).update({
+      status: "confirmed",
+      bundleId: useBundleId,
+      amountCents: 0,
+      updatedAt: new Date().toISOString(),
+    });
+    await notifyCoachOfBooking(bookingId);
+    return Response.json({ url: `/booking/success?booking=${bookingId}&bundle=1` });
+  }
 
   // Free booking path — skip Stripe entirely when total is 0
   if (totalCents === 0) {

@@ -1,0 +1,112 @@
+.wrapper { display: flex; flex-direction: column; gap: var(--space-lg); }
+
+.empty {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.optionBlock { padding: var(--space-lg) !important; display: flex; flex-direction: column; gap: var(--space-md); }
+
+.optionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.optionMeta {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  margin-left: 8px;
+}
+
+.noBundles {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  padding: var(--space-sm) 0;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.table th, .table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.table th { color: var(--color-text-muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; }
+.muted { color: var(--color-text-muted); }
+
+.activeBadge, .inactiveBadge {
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+}
+.activeBadge { background: rgba(40, 200, 100, 0.15); color: #4ade80; }
+.inactiveBadge { background: rgba(255,255,255,0.05); color: var(--color-text-muted); }
+
+.deleteBtn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  background: rgba(255,0,0,0.15);
+  color: #f87171;
+  border: none;
+  cursor: pointer;
+}
+.deleteBtn:hover { background: rgba(255,0,0,0.25); }
+
+.addBtn {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: white;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cancelBtn {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  background: transparent;
+  color: var(--color-text-muted);
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+}
+
+.addForm {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: var(--space-md);
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+}
+.addForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.addForm input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.25);
+  color: inherit;
+  width: 100px;
+}

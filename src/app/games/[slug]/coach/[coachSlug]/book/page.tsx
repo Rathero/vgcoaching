@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import BookingClient from "@/components/BookingClient/BookingClient";
 import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachAvailability } from "@/lib/firestore";
+import { listCoachBundles } from "@/lib/bundles";
 
 export default async function BookPage(props: PageProps<"/games/[slug]/coach/[coachSlug]/book">) {
   const { slug, coachSlug } = await props.params;
@@ -17,6 +18,7 @@ export default async function BookPage(props: PageProps<"/games/[slug]/coach/[co
 
   const options = await getCoachOptions(coach.id);
   const availability = await getCoachAvailability(coach.id);
+  const bundles = await listCoachBundles(coach.id, true);
 
   return (
     <>
@@ -31,7 +33,7 @@ export default async function BookPage(props: PageProps<"/games/[slug]/coach/[co
             Selecciona el tipo de sesión, fecha y hora que mejor te vengan.
           </p>
           <Suspense fallback={<div>Cargando...</div>}>
-            <BookingClient coach={coach} gameData={gameData} options={options} availability={availability} gameSlug={slug} />
+            <BookingClient coach={coach} gameData={gameData} options={options} availability={availability} gameSlug={slug} bundles={bundles} />
           </Suspense>
         </div>
       </div>
