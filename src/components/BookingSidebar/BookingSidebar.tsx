@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { CoachingOption } from "@/lib/types";
+import { CoachingOption, CoachBundle } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import styles from "./BookingSidebar.module.css";
 
@@ -10,6 +10,7 @@ interface Props {
   coachSlug: string;
   gameSlug: string;
   commissionRate?: number;
+  bundles?: CoachBundle[];
 }
 
 const TYPE_ICONS: Record<string, string> = {
@@ -20,7 +21,7 @@ const TYPE_ICONS: Record<string, string> = {
   group_coaching: "👥",
 };
 
-export default function BookingSidebar({ options, coachSlug, gameSlug, commissionRate = 0.05 }: Props) {
+export default function BookingSidebar({ options, coachSlug, gameSlug, commissionRate = 0.05, bundles = [] }: Props) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const router = useRouter();
 
@@ -37,6 +38,9 @@ export default function BookingSidebar({ options, coachSlug, gameSlug, commissio
         <h3 className={styles.bookingTitle}>Reservar sesión</h3>
         <div className={styles.optionList}>
           {options.map(opt => {
+            const optBundles = bundles
+              .filter(b => b.coachingOptionId === opt.id && b.active)
+              .sort((a, b) => a.sessions - b.sessions);
             return (
               <div
                 key={opt.id}
@@ -58,6 +62,19 @@ export default function BookingSidebar({ options, coachSlug, gameSlug, commissio
                   <span className={styles.optionDuration}>⏱ {opt.durationMinutes} min</span>
                   <span className={styles.optionPrice}>{formatPrice(opt.priceCents)}</span>
                 </div>
+                {optBundles.length > 0 && (
+                  <div className={styles.bundlesRow}>
+                    <span className={styles.bundlesLabel}>🎟️ Bonos:</span>
+                    {optBundles.map(b => {
+                      const savings = opt.priceCents * b.sessions - b.priceCents;
+                      return (
+                        <span key={b.id} className={styles.bundleChip} title={savings > 0 ? `Ahorras ${formatPrice(savings)}` : undefined}>
+                          <strong>{b.sessions}×</strong> {formatPrice(b.priceCents)}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}

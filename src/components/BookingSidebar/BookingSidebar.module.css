@@ -13,6 +13,30 @@
 .optionDuration { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.75rem; }
 .optionPrice { font-family: var(--font-mono); font-weight: 700; color: var(--color-primary-light); }
 
+.bundlesRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255,255,255,0.08);
+}
+.bundlesLabel { font-size: 0.7rem; color: var(--color-text-muted); margin-right: 2px; }
+.bundleChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  background: rgba(124,92,252,0.1);
+  color: var(--color-primary-light);
+  border: 1px solid rgba(124,92,252,0.2);
+}
+.bundleChip strong { font-weight: 700; }
+
 /* Price breakdown */
 .priceBreakdown { padding: var(--space-md); margin-bottom: var(--space-lg); border-radius: var(--radius-md); background: var(--color-bg-subtle); border: 1px solid var(--color-border); display: flex; flex-direction: column; gap: 6px; }
 .breakdownRow { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--color-text-muted); }

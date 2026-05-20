@@ -6,6 +6,7 @@ import BookingSidebar from "@/components/BookingSidebar/BookingSidebar";
 import CoachGallery from "@/components/CoachGallery/CoachGallery";
 import { TwitchIcon, InstagramIcon, TwitterIcon, DiscordIcon, YouTubeIcon } from "@/components/SocialIcons/SocialIcons";
 import { getGame, getCoach, getCoachGame, getCoachOptions, getCoachReviews, getCommissionRate, rankColors } from "@/lib/firestore";
+import { listCoachBundles } from "@/lib/bundles";
 import { rankImages } from "@/lib/utils";
 import styles from "./page.module.css";
 
@@ -20,6 +21,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
 
   const options = await getCoachOptions(coach.id);
   const reviews = await getCoachReviews(coach.id);
+  const bundles = await listCoachBundles(coach.id, true);
 
   const displayRating = reviews.length > 0 
     ? Math.round((reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length) * 10) / 10
@@ -211,7 +213,7 @@ export default async function CoachProfilePage(props: PageProps<"/games/[slug]/c
               )}
             </div>
 
-            {options.length > 0 && <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} commissionRate={commissionRate} />}
+            {options.length > 0 && <BookingSidebar options={options} coachSlug={coachSlug} gameSlug={slug} commissionRate={commissionRate} bundles={bundles} />}
           </div>
         </div>
       </div>
