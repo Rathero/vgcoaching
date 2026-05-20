@@ -376,12 +376,12 @@ export default function DashboardContent() {
           </div>
         )}
 
-        {/* Connections Section — only show when at least one integration is configured */}
+        {/* Connections Section — coach only */}
         {(() => {
+          const isCoach = profile?.role === "coach";
+          if (!isCoach) return null;
           const riotConfigured = !!process.env.NEXT_PUBLIC_RIOT_CONFIGURED;
           const discordConfigured = !!process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID && process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID !== "your-discord-client-id";
-          const isCoach = profile?.role === "coach";
-          if (!riotConfigured && !discordConfigured && !isCoach) return null;
           return (
             <div className={styles.connectionsSection}>
               <h2 className={styles.connectionsTitle}>🔗 Conexiones</h2>
@@ -548,30 +548,6 @@ export default function DashboardContent() {
                   );
                 })()}
 
-                {/* Discord */}
-                {discordConfigured && (
-                  <div className={`glass-card ${styles.connectionCard}`}>
-                    <div className={styles.connectionHeader}>
-                      <span className={styles.connectionIcon} style={{ color: "#5865F2" }}>🎮</span>
-                      <div>
-                        <strong>Discord</strong>
-                        <span className={styles.connectionDesc}>
-                          {profile?.discordUsername || "Conecta tu cuenta de Discord"}
-                        </span>
-                      </div>
-                    </div>
-                    {profile?.discordUsername ? (
-                      <span className={styles.connectedBadge}>✅ {profile.discordUsername}</span>
-                    ) : (
-                      <a
-                        className={styles.connectBtn}
-                        href={`https://discord.com/api/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || ""}&redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI || "")}&response_type=code&scope=identify&state=${user?.uid || ""}`}
-                      >
-                        Conectar
-                      </a>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
           );
