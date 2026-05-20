@@ -380,7 +380,8 @@ export default function DashboardContent() {
         {(() => {
           const riotConfigured = !!process.env.NEXT_PUBLIC_RIOT_CONFIGURED;
           const discordConfigured = !!process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID && process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID !== "your-discord-client-id";
-          if (!riotConfigured && !discordConfigured) return null;
+          const isCoach = profile?.role === "coach";
+          if (!riotConfigured && !discordConfigured && !isCoach) return null;
           return (
             <div className={styles.connectionsSection}>
               <h2 className={styles.connectionsTitle}>🔗 Conexiones</h2>
@@ -432,6 +433,87 @@ export default function DashboardContent() {
                         Conectar
                       </button>
                     )}
+                  </div>
+                )}
+
+                {/* Email for booking notifications — coach only */}
+                {profile?.role === "coach" && (
+                  <div className={`glass-card ${styles.connectionCard}`}>
+                    <div className={styles.connectionHeader}>
+                      <span className={styles.connectionIcon}>📧</span>
+                      <div>
+                        <strong>Email de notificaciones</strong>
+                        <span className={styles.connectionDesc}>
+                          {coachDoc?.notificationEmail
+                            ? `Recibes reservas en ${coachDoc.notificationEmail}`
+                            : "Configura dónde recibir tus reservas"}
+                        </span>
+                      </div>
+                    </div>
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!user) return;
+                        const fd = new FormData(e.currentTarget);
+                        const email = String(fd.get("notificationEmail") || "").trim();
+                        try {
+                          const token = await user.getIdToken();
+                          const res = await fetch("/api/coach/notifications", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                            body: JSON.stringify({ notificationEmail: email }),
+                          });
+                          const data = await res.json();
+                          if (res.ok) {
+                            setCoachDoc(coachDoc ? { ...coachDoc, notificationEmail: data.notificationEmail || undefined } : null);
+                            alert("✅ Email guardado");
+                          } else {
+                            alert(`❌ ${data.error}`);
+                          }
+                        } catch { alert("Error de conexión"); }
+                      }}
+                      style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", marginTop: "8px" }}
+                    >
+                      <input
+                        name="notificationEmail"
+                        type="email"
+                        placeholder="tucorreo@ejemplo.com"
+                        defaultValue={coachDoc?.notificationEmail || ""}
+                        style={{
+                          flex: "1 1 200px",
+                          padding: "8px 12px",
+                          borderRadius: "6px",
+                          border: "1px solid rgba(255,255,255,0.15)",
+                          background: "rgba(0,0,0,0.25)",
+                          color: "inherit",
+                        }}
+                      />
+                      <button className={styles.connectBtn} type="submit">Guardar</button>
+                      {coachDoc?.notificationEmail && (
+                        <button
+                          type="button"
+                          className={styles.connectBtn}
+                          style={{ background: "rgba(255,0,0,0.2)" }}
+                          onClick={async () => {
+                            if (!user) return;
+                            if (!confirm("¿Quitar email de notificaciones?")) return;
+                            try {
+                              const token = await user.getIdToken();
+                              const res = await fetch("/api/coach/notifications", {
+                                method: "DELETE",
+                                headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+                                body: JSON.stringify({ target: "email" }),
+                              });
+                              if (res.ok) {
+                                setCoachDoc(coachDoc ? { ...coachDoc, notificationEmail: undefined } : null);
+                              }
+                            } catch { /* ignore */ }
+                          }}
+                        >
+                          Quitar
+                        </button>
+                      )}
+                    </form>
                   </div>
                 )}
 

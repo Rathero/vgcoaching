@@ -1,4 +1,5 @@
 import { initializeApp, cert } from "firebase-admin/app";
+import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import * as dotenv from "dotenv";
 import * as path from "path";
@@ -9,9 +10,13 @@ if (!sa) { console.error("Missing key"); process.exit(1); }
 
 const app = initializeApp({ credential: cert(JSON.parse(sa)) }, "setup-ruben-test");
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const COACH_ID = "ruben-test";
 const NOTIFICATION_EMAIL = "rath1212@gmail.com";
+const LOGIN_EMAIL = "rath1212@gmail.com";
+const LOGIN_PASSWORD = "12345678";
+const DISPLAY_NAME = "Rubén (Test)";
 
 async function run() {
   console.log(`🧪 Setup test coach ${COACH_ID}...\n`);
@@ -89,7 +94,36 @@ async function run() {
   }
   console.log("  ✅ Availability (todos los días 09:00-22:00)");
 
+  let coachUid: string;
+  try {
+    const existing = await auth.getUserByEmail(LOGIN_EMAIL);
+    coachUid = existing.uid;
+    console.log("  ℹ️  Auth user exists:", coachUid);
+    await auth.updateUser(coachUid, { password: LOGIN_PASSWORD, displayName: DISPLAY_NAME });
+    console.log("  ✅ Password reset to:", LOGIN_PASSWORD);
+  } catch {
+    const u = await auth.createUser({ email: LOGIN_EMAIL, password: LOGIN_PASSWORD, displayName: DISPLAY_NAME });
+    coachUid = u.uid;
+    console.log("  ✅ Auth user created:", coachUid);
+  }
+
+  const now = new Date().toISOString();
+  await db.collection("users").doc(coachUid).set({
+    uid: coachUid,
+    displayName: DISPLAY_NAME,
+    email: LOGIN_EMAIL,
+    photoURL: "https://api.dicebear.com/9.x/adventurer/svg?seed=ruben",
+    role: "coach",
+    coachId: COACH_ID,
+    coachApplicationStatus: "approved",
+    updatedAt: now,
+  }, { merge: true });
+  console.log("  ✅ User profile (role: coach, coachId:", COACH_ID, ")");
+
   console.log(`\n🎉 Done.`);
+  console.log(`\n  Login:`);
+  console.log(`    email:    ${LOGIN_EMAIL}`);
+  console.log(`    password: ${LOGIN_PASSWORD}`);
   console.log(`  URL: /games/league-of-legends/coach/${COACH_ID}/book`);
   console.log(`  notificationEmail: ${NOTIFICATION_EMAIL}`);
   console.log(`  Precio: 0€ (skip Stripe)`);
